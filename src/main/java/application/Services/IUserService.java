@@ -1,24 +1,23 @@
 package application.Services;
 
 import application.Dto.UserDto;
+import application.Dto.UserProfileDto;
 
 import java.util.List;
 
 public interface IUserService {
 
 
-    public UserDto register(UserDto userDto);
+    void register(UserDto userDto);
 
-    public UserDto Login(String username , String password);
+    void Login(UserDto userDto);
 
-    public UserDto update(Long id , UserDto userDto);
+     UserDto update(Long id , UserDto userDto);
 
-    public void delete(Long id);
+    void deleteById(Long id);
+    UserDto getById(Long id);
 
-    public UserDto getById(Long id);
-
-
-    public List<UserDto> getAll();
+     List<UserDto> getAll();
 
 
 

@@ -20,8 +20,8 @@ public class Product {
     @Column(name = "price")
     private double price;
 
-    @Column(name = "stock")
-    private int stock;
+    @Column(name = "inventory")
+    private int inventory;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -70,14 +70,13 @@ public class Product {
         this.price = price;
     }
 
-    public int getStock() {
-        return stock;
+    public int getInventory() {
+        return inventory;
     }
 
-    public void setStock(int stock) {
-        this.stock = stock;
+    public void setInventory(int inventory) {
+        this.inventory=inventory;
     }
-
     public Category getCategory() {
         return category;
     }
@@ -109,4 +108,5 @@ public class Product {
     public void setCartItems(List<CartItem> cartItems) {
         this.cartItems = cartItems;
     }
+
 }

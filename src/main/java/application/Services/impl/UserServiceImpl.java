@@ -1,42 +1,144 @@
 package application.Services.impl;
 
+import application.Dto.CartDto;
 import application.Dto.UserDto;
+import application.Dto.UserProfileDto;
+import application.Repository.UserRepository;
 import application.Services.IUserService;
+import application.model.User;
+import application.model.UserProfile;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements IUserService {
 
 
-    @Override
-    public UserDto register(UserDto userDto) {
-        return null;
+
+    private UserRepository userRepository;
+
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
+    @Transactional
     @Override
-    public UserDto Login(String username, String password) {
-        return null;
+    public void register(UserDto userDto) {
+        Optional<User> User = userRepository.findByUsernameAndPassword(userDto.getUsername(), userDto.getPassword());
+        if (User.isPresent()) {
+            System.out.println("کاربر با نام کاربری موجود است");// اینجا میخوام اکسپشن بزارم
+        } else {
+            User user = convertToEntity(userDto);
+            userRepository.saveAndFlush(user);
+            System.out.println("Registration was successful ");
+        }
+    }
+    @Override
+    public void Login(UserDto userDto) {
+        Optional<User> User = userRepository.findByUsernameAndPassword(userDto.getUsername(), userDto.getPassword());
+        if (User.isPresent()) {
+            System.out.println("Login was successful");
+        } else {
+            System.out.println("The username or password is incorrect ");
+        }
+    }
+    @Transactional
+    @Override
+    public UserDto update(Long id, UserDto userDto) {
+        Optional<User> user = userRepository.findById(userDto.getId());
+        if (user.isPresent()) {
+            User user1 = convertToEntity(userDto);
+            userRepository.saveAndFlush(user1);
+            System.out.println("Profile information updated successfully");
+        } else {
+            System.out.println("User not found");
+        }
+        return userDto;
+    }
+    @Transactional
+    @Override
+    public void deleteById(Long id) {
+        Optional<User>user=userRepository.findById(id);
+        if (user.isPresent()) {
+            userRepository.deleteById(id);
+            System.out.println("User deleted successfully");
+        }else {
+            System.out.println("User not found َََ");
+        }
     }
 
-    @Override
-    public UserDto update(Long id , UserDto userDto) {
-        return null;
-    }
 
-    @Override
-    public void delete(Long id) {
-
-    }
 
     @Override
     public UserDto getById(Long id) {
+        Optional<User> user = userRepository.findById(id);
+        if (user.isPresent()) {
+            return convertToDto(user.get());
+        } else {
+            System.out.println("User not found");
+        }
         return null;
     }
 
     @Override
     public List<UserDto> getAll() {
-        return null;
+        List<User>users=userRepository.findAll();
+        return
+                users.stream().map(this::convertToDto).collect(Collectors.toList());
+
+
+    }
+
+
+    public UserDto convertToDto(User user) {
+        if (user == null) {
+            return null;
+        }
+        UserDto userDto = new UserDto();
+        userDto.setId(user.getId());
+        userDto.setUsername(user.getUsername());
+        userDto.setPassword(user.getPassword());
+        userDto.setEmail(user.getEmail());
+
+        if (user.getUserProfile() != null) {
+            UserProfileDto userProfileDto = new UserProfileDto();
+            userProfileDto.setId(user.getUserProfile().getId());
+            userProfileDto.setFirstName(user.getUserProfile().getFirstName());
+            userProfileDto.setLastName(user.getUserProfile().getLastName());
+            userProfileDto.setAddress(user.getUserProfile().getAddress());
+            userProfileDto.setPhoneNumber(user.getUserProfile().getPhoneNumber());
+            userDto.setUserProfile(userProfileDto);
+
+
+        }
+        return userDto;
+    }
+
+    public User convertToEntity(UserDto userDto) {
+        if (userDto == null) {
+            return null;
+        }
+        User user1 = new User();
+        user1.setId(userDto.getId());
+        user1.setUsername(userDto.getUsername());
+        user1.setPassword(userDto.getPassword());
+        user1.setEmail(userDto.getEmail());
+
+        if (userDto.getUserProfile() != null) {
+            UserProfile userProfile = new UserProfile();
+            userProfile.setId(userDto.getUserProfile().getId());
+            userProfile.setFirstName(userDto.getUserProfile().getFirstName());
+            userProfile.setLastName(userDto.getUserProfile().getLastName());
+            userProfile.setAddress(userDto.getUserProfile().getAddress());
+            userProfile.setPhoneNumber(userDto.getUserProfile().getPhoneNumber());
+            user1.setUserProfile(userProfile);
+        }
+        return user1;
+
     }
 }

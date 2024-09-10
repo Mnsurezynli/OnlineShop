@@ -13,15 +13,17 @@ public class UserDto {
 
      private String username;
 
+     private String password;
+
      private String email;
 
      private UserProfile userProfile;
 
-     private Cart cart;
-
-     private List<Order> orders;
-
-     private List<Comment>comments;
+//     private Cart cart;
+//
+//     private List<Order> orders;
+//
+//     private List<Comment>comments;
 
     public Long getId() {
         return id;
@@ -51,31 +53,42 @@ public class UserDto {
         return userProfile;
     }
 
-    public void setUserProfile(UserProfile userProfile) {
-        this.userProfile = userProfile;
+//    public void setUserProfile(UserProfile userProfile) {
+//        this.userProfile = userProfile;
+//    }
+
+//    public Cart getCart() {
+//        return cart;
+//    }
+//
+//    public void setCart(Cart cart) {
+//        this.cart = cart;
+//    }
+//
+//    public List<Order> getOrders() {
+//        return orders;
+//    }
+//
+//    public void setOrders(List<Order> orders) {
+//        this.orders = orders;
+//    }
+//
+//    public List<Comment> getComments() {
+//        return comments;
+//    }
+//
+//    public void setComments(List<Comment> comments) {
+//        this.comments = comments;
+//    }
+
+    public String getPassword() {
+        return password;
     }
 
-    public Cart getCart() {
-        return cart;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public void setCart(Cart cart) {
-        this.cart = cart;
-    }
-
-    public List<Order> getOrders() {
-        return orders;
-    }
-
-    public void setOrders(List<Order> orders) {
-        this.orders = orders;
-    }
-
-    public List<Comment> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
+    public void setUserProfile(UserProfileDto userProfileDto) {
     }
 }

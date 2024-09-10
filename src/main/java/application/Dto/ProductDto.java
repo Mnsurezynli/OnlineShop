@@ -14,7 +14,7 @@ public class ProductDto {
 
     private double price;
 
-    private  int stock;
+    private int inventory;
 
     private Category category;
 
@@ -50,14 +50,13 @@ public class ProductDto {
         this.price = price;
     }
 
-    public int getStock() {
-        return stock;
+    public int getInventory() {
+        return inventory;
     }
 
-    public void setStock(int stock) {
-        this.stock = stock;
+    public void setInventory(int inventory) {
+        this.inventory=inventory;
     }
-
     public Category getCategory() {
         return category;
     }
