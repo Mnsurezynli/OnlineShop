@@ -79,29 +79,47 @@ public class ProductServiceImpl implements IProductService {
 
 }
 
-    @Override
-    public List<ProductDto> getByCategoryId(Long categoryId) {
-        List<Product>products=productRepository.findByCategoryId(categoryId);
-        return
-                products.stream().map(this::convertToDto).collect(Collectors.toList());
 
-    }
-    @Override
-    public ProductDto inventoryUpdate(Long productId, ProductDto productDto) {
-     Optional<Product>product=productRepository.findById(productId);
-    // .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+        @Override
+        public List<ProductDto> getByCategoryId(Long categoryId) {
+            List<Product> products = productRepository.findByCategoryId(categoryId);
+
+            if (products.isEmpty()) {
+             //   throw new ResourceNotFoundException("No products found for the given category");
+            }
+
+            return products.stream()
+                    .map(this::convertToDto)
+                    .collect(Collectors.toList());
+        }
+
+        @Override
+    public ProductDto inventoryUpdate(Long productId, ProductDto productDto){
+                Product product = productRepository.findById(productId)
+                        //.orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + productId));
+                product.setInventory(productDto.getInventory());
+                 Product updatedProduct = productRepository.saveAndFlush(product);
+                return convertToDto(updatedProduct);
+            }
 
 
-    }
+            @Override
+            public List<ProductDto> searchWithName(String name) {
+                List<Product> products = productRepository.findByName(name);
 
-    @Override
-    public List<ProductDto> searchWithName(String name) {
-        return null;
-    }
+                if (products.isEmpty()) {
+                  //  throw new ResourceNotFoundException("No products found with name: " + name);
+                }
+
+                return products.stream()
+                        .map(this::convertToDto)
+                        .collect(Collectors.toList());
+            }
 
 
 
-    public ProductDto convertToDto(Product product) {
+
+            public ProductDto convertToDto(Product product) {
 
         if (product == null) {
             return null;
