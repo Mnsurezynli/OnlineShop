@@ -1,18 +1,22 @@
 package application.Services;
 
 import application.Dto.CategoryDto;
+import application.Dto.ProductDto;
 
 import java.util.List;
 
 public interface ICategoryService {
 
-    public CategoryDto add(CategoryDto categoryDto);
+    CategoryDto create(CategoryDto categoryDto);
 
-    public CategoryDto update(Long categoryId , CategoryDto categoryDto );
+    CategoryDto update(Long id, CategoryDto categoryDto);
 
-    public void delete(Long categoryId);
+    void deleteById(Long id);
 
-    public List<CategoryDto> getAll();
+    CategoryDto getById(Long id);
 
-    public CategoryDto getById(Long categoryId);
+    List<CategoryDto> getAll();
+
+    List<ProductDto> getProductsByCategoryId(Long id);
 }
+

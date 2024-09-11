@@ -13,6 +13,11 @@ public class CartItemDto {
 
     private Product product;
 
+    private int quantity;
+
+    private Long productId;
+
+
     public Long getId() {
         return id;
     }
@@ -43,5 +48,22 @@ public class CartItemDto {
 
     public void setProduct(Product product) {
         this.product = product;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+
+    public Long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
     }
 }

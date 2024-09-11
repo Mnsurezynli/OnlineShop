@@ -13,9 +13,9 @@ public class CommentDto {
 
     private LocalDate date ;
 
-    private User user;
+    private Long userId;
 
-    private Product product;
+    private Long productId;
 
     public Long getId() {
         return id;
@@ -41,19 +41,20 @@ public class CommentDto {
         this.date = date;
     }
 
-    public User getUser() {
-        return user;
+
+    public Long getProductId() {
+        return productId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setProductId(Long productId) {
+        this.productId = productId;
     }
 
-    public Product getProduct() {
-        return product;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }

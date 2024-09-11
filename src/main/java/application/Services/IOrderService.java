@@ -6,11 +6,13 @@ import java.util.List;
 
 public interface IOrderService {
 
-    public OrderDto save(Long userId);
+    OrderDto createOrder(OrderDto orderDto);
 
-    public OrderDto trackOrder(Long orderId);
+    OrderDto trackOrder(Long orderId);
 
-    public void cancleOrder(Long orderId);
+    void cancelOrder(Long userId, Long orderId);
 
-    public List<OrderDto> getByUserId(Long id);
+    OrderDto getById(Long id);
+
+     List<OrderDto> getAll();
 }

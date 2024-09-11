@@ -22,12 +22,13 @@ public class UserProfileServiceImpl implements IUserProfileService {
     public UserProfileServiceImpl(UserProfileRepository userProfileRepository) {
         this.userProfileRepository = userProfileRepository;
     }
+
     @Transactional
     @Override
     public UserProfileDto update(Long id, UserProfileDto userProfileDto) {
-        Optional<UserProfile> userProfile= userProfileRepository.findById(userProfileDto.getId());
+        Optional<UserProfile> userProfile = userProfileRepository.findById(userProfileDto.getId());
         if (userProfile.isPresent()) {
-           UserProfile userProfile1 =convertToEntity(userProfileDto);
+            UserProfile userProfile1 = convertToEntity(userProfileDto);
             userProfileRepository.saveAndFlush(userProfile1);
             System.out.println("Profile information updated successfully");
         } else {
@@ -38,18 +39,18 @@ public class UserProfileServiceImpl implements IUserProfileService {
 
     @Override
     public UserProfileDto getById(Long id) {
-            Optional<UserProfile> userProfile = userProfileRepository.findById(id);
-            if (userProfile.isPresent()) {
-                return convertToDto(userProfile.get());
-            } else {
-                System.out.println("UserProfile not found");
-            }
-            return null;
+        Optional<UserProfile> userProfile = userProfileRepository.findById(id);
+        if (userProfile.isPresent()) {
+            return convertToDto(userProfile.get());
+        } else {
+            System.out.println("UserProfile not found");
         }
+        return null;
+    }
 
     @Override
     public List<UserProfileDto> getAll() {
-        List<UserProfile>userProfiles=userProfileRepository.findAll();
+        List<UserProfile> userProfiles = userProfileRepository.findAll();
         return
                 userProfiles.stream().map(this::convertToDto).collect(Collectors.toList());
     }
@@ -64,14 +65,14 @@ public class UserProfileServiceImpl implements IUserProfileService {
         userProfileDto.setLastName(userProfile.getLastName());
         userProfileDto.setAddress(userProfile.getAddress());
         userProfileDto.setPhoneNumber(userProfile.getPhoneNumber());
-        return userProfileDto ;
+        return userProfileDto;
     }
 
     public UserProfile convertToEntity(UserProfileDto userProfileDto) {
-        if (userProfileDto== null) {
+        if (userProfileDto == null) {
             return null;
         }
-        UserProfile userProfile=new UserProfile();
+        UserProfile userProfile = new UserProfile();
         userProfile.setId(userProfile.getId());
         userProfile.setFirstName(userProfile.getFirstName());
         userProfile.setLastName(userProfile.getLastName());

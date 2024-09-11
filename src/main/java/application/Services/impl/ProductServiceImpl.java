@@ -21,6 +21,7 @@ public class ProductServiceImpl implements IProductService {
     public ProductServiceImpl(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
+
     @Transactional
     @Override
     public ProductDto add(ProductDto productDto) {
@@ -34,12 +35,13 @@ public class ProductServiceImpl implements IProductService {
         }
         return productDto;
     }
+
     @Transactional
     @Override
     public ProductDto update(Long id, ProductDto productDto) {
         Optional<Product> product = productRepository.findById(productDto.getId());
         if (product.isPresent()) {
-           Product product1= convertToEntity(productDto);
+            Product product1 = convertToEntity(productDto);
             productRepository.saveAndFlush(product1);
             System.out.println("Product information updated successfully");
         } else {
@@ -50,12 +52,12 @@ public class ProductServiceImpl implements IProductService {
 
     @Transactional
     @Override
-    public void delete(Long id) {
-        Optional<Product>product=productRepository.findById(id);
+    public void deleteById(Long id) {
+        Optional<Product> product = productRepository.findById(id);
         if (product.isPresent()) {
             productRepository.deleteById(id);
             System.out.println("Product deleted successfully");
-        }else {
+        } else {
             System.out.println("Product not found َََ");
         }
     }
@@ -73,58 +75,69 @@ public class ProductServiceImpl implements IProductService {
 
     @Override
     public List<ProductDto> getAll() {
-        List<Product>products=productRepository.findAll();
+        List<Product> products = productRepository.findAll();
         return
                 products.stream().map(this::convertToDto).collect(Collectors.toList());
 
-}
+    }
 
 
-        @Override
-        public List<ProductDto> getByCategoryId(Long categoryId) {
-            List<Product> products = productRepository.findByCategoryId(categoryId);
+    @Override
+    public List<ProductDto> getByCategoryId(Long categoryId) {
+        List<Product> products = productRepository.findByCategoryId(categoryId);
 
-            if (products.isEmpty()) {
-             //   throw new ResourceNotFoundException("No products found for the given category");
-            }
-
-            return products.stream()
-                    .map(this::convertToDto)
-                    .collect(Collectors.toList());
+        if (products.isEmpty()) {
+            //   throw new ResourceNotFoundException("No products found for the given category");
         }
 
-        @Override
-    public ProductDto inventoryUpdate(Long productId, ProductDto productDto){
-                Product product = productRepository.findById(productId)
-                        //.orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + productId));
-                product.setInventory(productDto.getInventory());
-                 Product updatedProduct = productRepository.saveAndFlush(product);
-                return convertToDto(updatedProduct);
-            }
+        return products.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
 
 
-            @Override
-            public List<ProductDto> searchWithName(String name) {
-                List<Product> products = productRepository.findByName(name);
+    @Override
+    public ProductDto updateInventory(Long productId, int quantityChange) {
+        Product product = productRepository.findById(productId)
+        //  .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + productId));
 
-                if (products.isEmpty()) {
-                  //  throw new ResourceNotFoundException("No products found with name: " + name);
-                }
+        // به‌روزرسانی موجودی محصول: افزودن یا کاهش موجودی
+        int newInventory = product.getInventory() + quantityChange;
 
-                return products.stream()
-                        .map(this::convertToDto)
-                        .collect(Collectors.toList());
-            }
+        if (newInventory < 0) {
+            throw new IllegalArgumentException("Inventory cannot be negative");
+        }
+
+        product.setInventory(newInventory);
+
+        // ذخیره‌سازی محصول به‌روزرسانی شده
+        Product updatedProduct = productRepository.save(product);
+
+        // برگرداندن محصول به شکل DTO
+        return convertToDto(updatedProduct);
+    }
 
 
+    @Override
+    public List<ProductDto> searchWithName(String name) {
+        List<Product> products = productRepository.findByName(name);
+
+        if (products.isEmpty()) {
+            //  throw new ResourceNotFoundException("No products found with name: " + name);
+        }
+
+        return products.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
 
 
-            public ProductDto convertToDto(Product product) {
+    public ProductDto convertToDto(Product product) {
 
         if (product == null) {
             return null;
         }
-        ProductDto productDto=new ProductDto();
+        ProductDto productDto = new ProductDto();
         productDto.setId(product.getId());
         productDto.setName(product.getName());
         productDto.setBrand(product.getBrand());
@@ -134,16 +147,16 @@ public class ProductServiceImpl implements IProductService {
     }
 
     public Product convertToEntity(ProductDto productDto) {
-        if (productDto== null) {
+        if (productDto == null) {
             return null;
         }
-        Product product=new Product();
-      product.setId(productDto.getId());
-      product.setName(productDto.getName());
-      product.setBrand(productDto.getBrand());
-      product.setPrice(productDto.getPrice());
-      product.setInventory(productDto.getInventory());
-      return product;
+        Product product = new Product();
+        product.setId(productDto.getId());
+        product.setName(productDto.getName());
+        product.setBrand(productDto.getBrand());
+        product.setPrice(productDto.getPrice());
+        product.setInventory(productDto.getInventory());
+        return product;
     }
 
 }

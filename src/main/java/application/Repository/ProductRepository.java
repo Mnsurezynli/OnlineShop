@@ -16,7 +16,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
 
     Product update(Long id , Product product);
 
-    void  delete(Long id);
+    void  deleteById(Long id);
 
     Optional<Product> findById(Long id);
 

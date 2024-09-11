@@ -3,12 +3,19 @@ package application.Services;
 import application.Dto.CommentDto;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ICommentService {
 
-    public CommentDto add( Long  userId, Long productId, CommentDto commentDto);
+    CommentDto create(CommentDto commentDto);
+    void deleteById(Long id);
 
-    public void  delete(Long commentId);
+   Optional<CommentDto> getCommentById(Long id);
 
-    List<CommentDto> getByProduct(Long productId);
+    List<CommentDto> getAll();
+
+    List<CommentDto> getByProductId(Long productId);
+
+    List<CommentDto> getByUserId(Long userId);
 }
+

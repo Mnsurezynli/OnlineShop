@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements IUserService {
 
 
-
     private UserRepository userRepository;
 
     public UserServiceImpl(UserRepository userRepository) {
@@ -38,6 +37,7 @@ public class UserServiceImpl implements IUserService {
             System.out.println("Registration was successful ");
         }
     }
+
     @Override
     public void Login(UserDto userDto) {
         Optional<User> User = userRepository.findByUsernameAndPassword(userDto.getUsername(), userDto.getPassword());
@@ -47,6 +47,7 @@ public class UserServiceImpl implements IUserService {
             System.out.println("The username or password is incorrect ");
         }
     }
+
     @Transactional
     @Override
     public UserDto update(Long id, UserDto userDto) {
@@ -60,18 +61,18 @@ public class UserServiceImpl implements IUserService {
         }
         return userDto;
     }
+
     @Transactional
     @Override
     public void deleteById(Long id) {
-        Optional<User>user=userRepository.findById(id);
+        Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
             userRepository.deleteById(id);
             System.out.println("User deleted successfully");
-        }else {
+        } else {
             System.out.println("User not found َََ");
         }
     }
-
 
 
     @Override
@@ -87,7 +88,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public List<UserDto> getAll() {
-        List<User>users=userRepository.findAll();
+        List<User> users = userRepository.findAll();
         return
                 users.stream().map(this::convertToDto).collect(Collectors.toList());
 

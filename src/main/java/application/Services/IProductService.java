@@ -10,7 +10,7 @@ public interface IProductService {
 
        ProductDto update(Long id , ProductDto productDto);
 
-       void  delete(Long id);
+       void  deleteById(Long id);
 
        ProductDto getById(Long id);
 
@@ -18,7 +18,7 @@ public interface IProductService {
 
         List<ProductDto> getByCategoryId(Long categoryId);
 
-       public ProductDto inventoryUpdate(Long productId , ProductDto productDto);
+       public ProductDto updateInventory(Long productId , int quantityChange);
 
        public List<ProductDto> searchWithName(String name);
 

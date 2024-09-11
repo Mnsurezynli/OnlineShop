@@ -2,11 +2,15 @@ package application.Services;
 
 import application.Dto.OrderItemDto;
 
+import java.util.List;
+import java.util.Optional;
+
 public interface IOrderItemService {
 
-    public OrderItemDto add (OrderItemDto orderItemDto);
+    OrderItemDto add (OrderItemDto orderItemDto);
+    void deleteById(Long orderItemId);
 
-    public OrderItemDto update(Long orderItemId, OrderItemDto orderItemDto);
-
-    public void delete(Long orderItemId);
+    Optional<OrderItemDto> getOrderItemById(Long id);
+    List<OrderItemDto> getAll();
+    List<OrderItemDto> getOrderItemsByOrderId(Long orderId);
 }

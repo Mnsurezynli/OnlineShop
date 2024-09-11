@@ -1,5 +1,6 @@
 package application.Dto;
 
+import application.model.CartItem;
 import application.model.OrderItem;
 import application.model.User;
 
@@ -9,7 +10,6 @@ import java.util.List;
 public class OrderDto {
 
 
-
     private Long id;
     private double totalPrice;
     private String status;
@@ -17,6 +17,7 @@ public class OrderDto {
     private List<OrderItem> orderItems;
     private User user;
 
+    private List<CartItemDto> cartItems;
     public Long getId() {
         return id;
     }
@@ -64,6 +65,13 @@ public class OrderDto {
     public void setUser(User user) {
         this.user = user;
     }
-}
 
+    public List<CartItemDto> getCartItems() {
+        return cartItems;
+    }
+
+    public void setCartItems(List<CartItemDto> cartItems) {
+        this.cartItems = cartItems;
+    }
+}
 

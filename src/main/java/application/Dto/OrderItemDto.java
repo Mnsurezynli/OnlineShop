@@ -9,9 +9,9 @@ public class OrderItemDto {
 
     private int number;
 
-    private Order order;
+    private Long orderId;
 
-    private Product product;
+    private Long productId;
 
     public Long getId() {
         return id;
@@ -29,19 +29,19 @@ public class OrderItemDto {
         this.number = number;
     }
 
-    public Order getOrder() {
-        return order;
+    public Long getOrderId() {
+        return orderId;
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
     }
 
-    public Product getProduct() {
-        return product;
+    public Long getProductId() {
+        return productId;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setProductId(Long productId) {
+        this.productId = productId;
     }
 }

@@ -2,9 +2,20 @@ package application.Services;
 
 import application.Dto.CartItemDto;
 
+import java.util.List;
+
 public interface ICartItemService {
-     public CartItemDto add(CartItemDto cartItemDto, Long cartId);
-    public   CartItemDto update(Long cartItemId, CartItemDto cartItemDto);
-    public void delete(Long cartItemId);
+
+
+    CartItemDto addCartItem(Long cartId, Long productId, int quantity);
+
+    CartItemDto updateCartItem(Long cartId, Long productId, int newQuantity);
+
+    void removeCartItem(Long cartId, Long productId);
+
+    List<CartItemDto> getCartItems(Long cartId);
+
 }
+
+
 

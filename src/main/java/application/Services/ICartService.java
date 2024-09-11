@@ -5,11 +5,16 @@ import application.Dto.CartItemDto;
 
 public interface ICartService {
 
-    public void save(Long userId , CartItemDto cartItemDto);
 
-    public void delete(Long userId);
+    void addProductToCart(Long cartId, Long productId, int quantity);
 
-    public CartDto getByUser(Long userId);
+    CartDto viewCart(Long cartId);
 
-    public CartDto calculate(Long userId);
+    void updateCartItem(Long cartId, Long productId, int newQuantity);
+
+    void removeProductFromCart(Long cartId, Long productId);
 }
+
+
+
+
