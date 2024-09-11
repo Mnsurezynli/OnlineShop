@@ -8,6 +8,7 @@ import application.model.Category;
 import application.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,6 +27,7 @@ public class CategoryServiceImpl implements ICategoryService {
         this.categoryRepository = categoryRepository;
     }
 
+    @Transactional
     @Override
     public CategoryDto create(CategoryDto categoryDto) {
         Category category = convertToEntity(categoryDto);
@@ -33,6 +35,7 @@ public class CategoryServiceImpl implements ICategoryService {
         return convertToDto(category);
     }
 
+    @Transactional
     @Override
     public CategoryDto update(Long id, CategoryDto categoryDto) {
         Category category = categoryRepository.findById(id)
@@ -42,6 +45,7 @@ public class CategoryServiceImpl implements ICategoryService {
         return convertToDto(category);
     }
 
+    @Transactional
     @Override
     public void deleteById(Long id) {
         Category category = categoryRepository.findById(id)

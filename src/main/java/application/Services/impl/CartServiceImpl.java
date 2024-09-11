@@ -11,6 +11,7 @@ import application.model.Cart;
 import application.model.CartItem;
 import application.model.Product;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CartServiceImpl implements ICartService {
@@ -25,6 +26,7 @@ public class CartServiceImpl implements ICartService {
         this.cartRepository = cartRepository;
     }
 
+    @Transactional
     @Override
     public void addProductToCart(Long cartId, Long productId, int quantity) {
         Cart cart = cartRepository.findById(cartId)
@@ -54,6 +56,7 @@ public class CartServiceImpl implements ICartService {
         return convertToDto(cart);
     }
 
+    @Transactional
     @Override
     public void updateCartItem(Long cartId, Long productId, int newQuantity) {
 
@@ -77,6 +80,7 @@ public class CartServiceImpl implements ICartService {
 
     }
 
+    @Transactional
     @Override
     public void removeProductFromCart(Long cartId, Long productId) {
         Cart cart = cartRepository.findById(cartId)

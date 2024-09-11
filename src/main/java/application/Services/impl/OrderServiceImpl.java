@@ -11,6 +11,7 @@ import application.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,6 +29,7 @@ public class OrderServiceImpl implements IOrderService {
         this.orderRepository = orderRepository;
     }
 
+    @Transactional
     @Override
     public OrderDto createOrder(OrderDto orderDto) {
         // یافتن سبد خرید کاربر
@@ -47,7 +49,7 @@ public class OrderServiceImpl implements IOrderService {
         order = convertToEntity(orderDto);
         return orderDto;
     }
-
+    @Transactional
     @Override
     public OrderDto trackOrder(Long orderId) {
         Order order = orderRepository.findById(orderId)
@@ -60,7 +62,7 @@ public class OrderServiceImpl implements IOrderService {
         return orderDto;
     }
 
-
+    @Transactional
     @Override
     public void cancelOrder(Long userId, Long orderId) {
         Order order = orderRepository.findByIdAndUserId(orderId, userId)

@@ -10,6 +10,7 @@ import application.model.Product;
 import application.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -30,7 +31,7 @@ public class CommentServiceImpl implements ICommentService {
     public CommentServiceImpl(CommentRepository commentRepository) {
         this.commentRepository = commentRepository;
     }
-
+    @Transactional
     @Override
     public CommentDto create(CommentDto commentDto) {
         Product product = productRepository.findById(commentDto.getProductId())
@@ -48,7 +49,7 @@ public class CommentServiceImpl implements ICommentService {
         return convertToDto(Comment);
 
     }
-
+    @Transactional
     @Override
     public void deleteById(Long id) {
         Optional<Comment> comment = commentRepository.findById(id);
@@ -56,13 +57,13 @@ public class CommentServiceImpl implements ICommentService {
             commentRepository.deleteById(id);
             System.out.println("Comment deleted successfully");
         } else {
-            System.out.println("Comment not found َََ");
+            System.out.println("Comment not found َََ");//entity not found
         }
     }
 
     @Override
     public Optional<CommentDto> getCommentById(Long id) {
-        return commentRepository.findById(id).map(this::convertToDto);
+        return commentRepository.findById(id).map(this::convertToDto);//entity not found
     }
 
     @Override
@@ -76,14 +77,14 @@ public class CommentServiceImpl implements ICommentService {
     public List<CommentDto> getByProductId(Long productId) {
         return commentRepository.findByProductId(productId).stream()
                 .map(this::convertToDto)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList());//resource
     }
 
     @Override
     public List<CommentDto> getByUserId(Long userId) {
         return commentRepository.findByUserId(userId).stream()
                 .map(this::convertToDto)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList());//resource
     }
 
     public CommentDto convertToDto(Comment comment) {

@@ -45,7 +45,7 @@ public class ProductServiceImpl implements IProductService {
             productRepository.saveAndFlush(product1);
             System.out.println("Product information updated successfully");
         } else {
-            System.out.println("Product not found ");
+            System.out.println("Product not found ");//
         }
         return productDto;
     }
@@ -58,7 +58,7 @@ public class ProductServiceImpl implements IProductService {
             productRepository.deleteById(id);
             System.out.println("Product deleted successfully");
         } else {
-            System.out.println("Product not found َََ");
+            System.out.println("Product not found َََ");//
         }
     }
 
@@ -68,7 +68,7 @@ public class ProductServiceImpl implements IProductService {
         if (product.isPresent()) {
             return convertToDto(product.get());
         } else {
-            System.out.println("Product not found");
+            System.out.println("Product not found");//
         }
         return null;
     }
@@ -95,7 +95,7 @@ public class ProductServiceImpl implements IProductService {
                 .collect(Collectors.toList());
     }
 
-
+    @Transactional
     @Override
     public ProductDto updateInventory(Long productId, int quantityChange) {
         Product product = productRepository.findById(productId)

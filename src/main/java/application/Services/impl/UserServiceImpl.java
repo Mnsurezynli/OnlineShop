@@ -9,8 +9,10 @@ import application.model.User;
 import application.model.UserProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,12 +27,13 @@ public class UserServiceImpl implements IUserService {
         this.userRepository = userRepository;
     }
 
+    @Validated
     @Transactional
     @Override
     public void register(UserDto userDto) {
         Optional<User> User = userRepository.findByUsernameAndPassword(userDto.getUsername(), userDto.getPassword());
         if (User.isPresent()) {
-            System.out.println("کاربر با نام کاربری موجود است");// اینجا میخوام اکسپشن بزارم
+            System.out.println("کاربر با نام کاربری موجود است");// یوزر الردی ایگزیست اینجا میخوام اکسپشن بزارم
         } else {
             User user = convertToEntity(userDto);
             userRepository.saveAndFlush(user);
@@ -38,6 +41,7 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
+    @Validated
     @Override
     public void Login(UserDto userDto) {
         Optional<User> User = userRepository.findByUsernameAndPassword(userDto.getUsername(), userDto.getPassword());
@@ -45,9 +49,10 @@ public class UserServiceImpl implements IUserService {
             System.out.println("Login was successful");
         } else {
             System.out.println("The username or password is incorrect ");
+           // اینولید عدم وجود کاربر
         }
     }
-
+    @Validated
     @Transactional
     @Override
     public UserDto update(Long id, UserDto userDto) {
@@ -57,7 +62,7 @@ public class UserServiceImpl implements IUserService {
             userRepository.saveAndFlush(user1);
             System.out.println("Profile information updated successfully");
         } else {
-            System.out.println("User not found");
+            System.out.println("User not found");//user not found
         }
         return userDto;
     }
@@ -70,7 +75,7 @@ public class UserServiceImpl implements IUserService {
             userRepository.deleteById(id);
             System.out.println("User deleted successfully");
         } else {
-            System.out.println("User not found َََ");
+            System.out.println("User not found َََ");//یوزر نات فوند
         }
     }
 
@@ -81,7 +86,7 @@ public class UserServiceImpl implements IUserService {
         if (user.isPresent()) {
             return convertToDto(user.get());
         } else {
-            System.out.println("User not found");
+            System.out.println("User not found");//user not د
         }
         return null;
     }

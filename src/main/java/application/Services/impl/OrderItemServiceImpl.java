@@ -13,6 +13,7 @@ import application.model.User;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,7 +30,7 @@ public class OrderItemServiceImpl implements IOrderItemService {
     public OrderItemServiceImpl(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
-
+    @Transactional
     @Override
     public OrderItemDto add(OrderItemDto orderItemDto) {
         Order order = orderRepository.findById(orderItemDto.getOrderId())
@@ -46,7 +47,7 @@ public class OrderItemServiceImpl implements IOrderItemService {
         return convertToDto(OrderItem);
     }
 
-
+    @Transactional
     @Override
     public void deleteById(Long orderItemId) {
         Optional<OrderItem> orderItem = orderItemRepository.findById(orderItemId);
@@ -54,14 +55,14 @@ public class OrderItemServiceImpl implements IOrderItemService {
             orderItemRepository.deleteById(orderItemId);
             System.out.println("OrderItem deleted successfully");
         } else {
-            System.out.println("OrderItem not found َََ");
+            System.out.println("OrderItem not found َََ");//entity not found
         }
     }
 
 
     @Override
     public Optional<OrderItemDto> getOrderItemById(Long id) {
-        return orderItemRepository.findOrderItemById(id).map(this::convertToDto);
+        return orderItemRepository.findOrderItemById(id).map(this::convertToDto);//entity not found
     }
 
     @Override

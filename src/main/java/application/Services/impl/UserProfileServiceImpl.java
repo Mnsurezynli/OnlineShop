@@ -32,7 +32,7 @@ public class UserProfileServiceImpl implements IUserProfileService {
             userProfileRepository.saveAndFlush(userProfile1);
             System.out.println("Profile information updated successfully");
         } else {
-            System.out.println("User not found");
+            System.out.println("User not found");//not found exception
         }
         return userProfileDto;
     }
@@ -43,7 +43,7 @@ public class UserProfileServiceImpl implements IUserProfileService {
         if (userProfile.isPresent()) {
             return convertToDto(userProfile.get());
         } else {
-            System.out.println("UserProfile not found");
+            System.out.println("UserProfile not found");//not found exception
         }
         return null;
     }
