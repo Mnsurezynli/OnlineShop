@@ -1,10 +1,9 @@
 package application.Services.impl;
 
-import application.Dto.UserDto;
 import application.Dto.UserProfileDto;
 import application.Repository.UserProfileRepository;
 import application.Services.IUserProfileService;
-import application.model.User;
+import application.exception.ResourceNotFoundException;
 import application.model.UserProfile;
 import org.springframework.stereotype.Service;
 
@@ -26,26 +25,19 @@ public class UserProfileServiceImpl implements IUserProfileService {
     @Transactional
     @Override
     public UserProfileDto update(Long id, UserProfileDto userProfileDto) {
-        Optional<UserProfile> userProfile = userProfileRepository.findById(userProfileDto.getId());
-        if (userProfile.isPresent()) {
-            UserProfile userProfile1 = convertToEntity(userProfileDto);
-            userProfileRepository.saveAndFlush(userProfile1);
-            System.out.println("Profile information updated successfully");
-        } else {
-            System.out.println("User not found");//not found exception
-        }
+        Optional<UserProfile> userProfile = Optional.ofNullable(userProfileRepository.findById(userProfileDto.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("UserProfile not found")));
+        UserProfile userProfile1 = convertToEntity(userProfileDto);
+        userProfileRepository.saveAndFlush(userProfile1);
+        System.out.println("Profile information updated successfully");
         return userProfileDto;
     }
 
     @Override
     public UserProfileDto getById(Long id) {
-        Optional<UserProfile> userProfile = userProfileRepository.findById(id);
-        if (userProfile.isPresent()) {
+        Optional<UserProfile> userProfile = Optional.ofNullable(userProfileRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("UserProfile not found")));
             return convertToDto(userProfile.get());
-        } else {
-            System.out.println("UserProfile not found");//not found exception
-        }
-        return null;
     }
 
     @Override

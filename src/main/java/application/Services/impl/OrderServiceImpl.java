@@ -7,6 +7,7 @@ import application.Repository.OrderRepository;
 import application.Repository.ProductRepository;
 import application.Repository.UserRepository;
 import application.Services.IOrderService;
+import application.exception.ResourceNotFoundException;
 import application.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,33 +33,26 @@ public class OrderServiceImpl implements IOrderService {
     @Transactional
     @Override
     public OrderDto createOrder(OrderDto orderDto) {
-        // یافتن سبد خرید کاربر
         Cart cart = cartRepository.findById(orderDto.getUser().getId())
-        // .orElseThrow(() -> new ResourceNotFoundException("Cart not found for user with id: " + orderDto.getUserId()));
-        // بررسی موجودی محصولات و کاهش موجودی
+                .orElseThrow(() -> new ResourceNotFoundException("Cart not found for user with id: " + orderDto.getUserId()));
         for (CartItemDto cartItemDto : orderDto.getCartItems()) {
             Product product = productRepository.findById(cartItemDto.getProduct().getId())
-            //  .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + cartItemDto.getProductId()));
-            // کاهش موجودی محصول
+                    .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + cartItemDto.getProductId()));
             product.setInventory(product.getInventory() - cartItemDto.getQuantity());
             productRepository.save(product);
         }
-        // ایجاد و ذخیره سفارش
         Order order = new Order();
         Order savedOrder = orderRepository.save(order);
         order = convertToEntity(orderDto);
         return orderDto;
     }
+
     @Transactional
     @Override
     public OrderDto trackOrder(Long orderId) {
         Order order = orderRepository.findById(orderId)
-        // .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + orderId));
-
-
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + orderId));
         OrderDto orderDto = convertToDto(order);
-
-
         return orderDto;
     }
 
@@ -66,7 +60,7 @@ public class OrderServiceImpl implements IOrderService {
     @Override
     public void cancelOrder(Long userId, Long orderId) {
         Order order = orderRepository.findByIdAndUserId(orderId, userId)
-                .orElseThrow(() -> new RuntimeException("The order was not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("The order was not found"));
         if ("SHIPPED".equals(order.getStatus())) {
             throw new RuntimeException("It is not possible to cancel the order at the shipping stage");
         }
@@ -78,7 +72,7 @@ public class OrderServiceImpl implements IOrderService {
 
     @Override
     public OrderDto getById(Long id) {
-        Order order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));
+        Order order = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
         return convertToDto(order);
     }
 

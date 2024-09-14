@@ -4,6 +4,8 @@ import application.Dto.ProductDto;
 import application.Dto.UserProfileDto;
 import application.Repository.ProductRepository;
 import application.Services.IProductService;
+import application.exception.ResourceAlreadyExistsException;
+import application.exception.ResourceNotFoundException;
 import application.model.Product;
 import application.model.User;
 import application.model.UserProfile;
@@ -27,7 +29,7 @@ public class ProductServiceImpl implements IProductService {
     public ProductDto add(ProductDto productDto) {
         Optional<Product> product = productRepository.findById(productDto.getId());
         if (product.isPresent()) {
-            System.out.println("There is a product");// اینجا میخوام اکسپشن بزارم
+            throw new ResourceAlreadyExistsException("Product with ID " + productDto.getId() + " already exists.");
         } else {
             Product product1 = convertToEntity(productDto);
             productRepository.saveAndFlush(product1);
@@ -36,16 +38,18 @@ public class ProductServiceImpl implements IProductService {
         return productDto;
     }
 
+
     @Transactional
     @Override
     public ProductDto update(Long id, ProductDto productDto) {
-        Optional<Product> product = productRepository.findById(productDto.getId());
+        Optional<Product> product = productRepository.findById(id);
         if (product.isPresent()) {
             Product product1 = convertToEntity(productDto);
+            product1.setId(id);
             productRepository.saveAndFlush(product1);
             System.out.println("Product information updated successfully");
         } else {
-            System.out.println("Product not found ");//
+            throw new ResourceNotFoundException("Product with ID " + id + " not found.");
         }
         return productDto;
     }
@@ -58,7 +62,7 @@ public class ProductServiceImpl implements IProductService {
             productRepository.deleteById(id);
             System.out.println("Product deleted successfully");
         } else {
-            System.out.println("Product not found َََ");//
+            throw new ResourceNotFoundException("Product with ID " + id + " not found.");
         }
     }
 
@@ -68,9 +72,8 @@ public class ProductServiceImpl implements IProductService {
         if (product.isPresent()) {
             return convertToDto(product.get());
         } else {
-            System.out.println("Product not found");//
+            throw new ResourceNotFoundException("Product with ID " + id + " not found.");
         }
-        return null;
     }
 
     @Override
@@ -87,7 +90,7 @@ public class ProductServiceImpl implements IProductService {
         List<Product> products = productRepository.findByCategoryId(categoryId);
 
         if (products.isEmpty()) {
-            //   throw new ResourceNotFoundException("No products found for the given category");
+             throw new ResourceNotFoundException("No products found for the given category");
         }
 
         return products.stream()
@@ -99,21 +102,13 @@ public class ProductServiceImpl implements IProductService {
     @Override
     public ProductDto updateInventory(Long productId, int quantityChange) {
         Product product = productRepository.findById(productId)
-        //  .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + productId));
-
-        // به‌روزرسانی موجودی محصول: افزودن یا کاهش موجودی
+         .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + productId));
         int newInventory = product.getInventory() + quantityChange;
-
         if (newInventory < 0) {
             throw new IllegalArgumentException("Inventory cannot be negative");
         }
-
         product.setInventory(newInventory);
-
-        // ذخیره‌سازی محصول به‌روزرسانی شده
         Product updatedProduct = productRepository.save(product);
-
-        // برگرداندن محصول به شکل DTO
         return convertToDto(updatedProduct);
     }
 
@@ -121,11 +116,9 @@ public class ProductServiceImpl implements IProductService {
     @Override
     public List<ProductDto> searchWithName(String name) {
         List<Product> products = productRepository.findByName(name);
-
         if (products.isEmpty()) {
-            //  throw new ResourceNotFoundException("No products found with name: " + name);
+              throw new ResourceNotFoundException("No products found with name: " + name);
         }
-
         return products.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());

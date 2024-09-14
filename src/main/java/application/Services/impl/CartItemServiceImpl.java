@@ -6,6 +6,7 @@ import application.Repository.CartItemRepository;
 import application.Repository.CartRepository;
 import application.Repository.ProductRepository;
 import application.Services.ICartItemService;
+import application.exception.ResourceNotFoundException;
 import application.model.Cart;
 import application.model.CartItem;
 import application.model.Product;
@@ -32,10 +33,9 @@ public class CartItemServiceImpl implements ICartItemService {
     @Override
     public CartItemDto addCartItem(Long cartId, Long productId, int quantity) {
         Cart cart = cartRepository.findById(cartId)
-        //     .orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
         Product product = productRepository.findById(productId)
-        //   .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
-
+          .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
         CartItem existingCartItem = cartItemRepository.findByCartAndProduct(cart, product);
         CartItem cartItem = null;
         if (existingCartItem != null) {
@@ -55,9 +55,9 @@ public class CartItemServiceImpl implements ICartItemService {
     @Override
     public CartItemDto updateCartItem(Long cartId, Long productId, int newQuantity) {
         Cart cart = cartRepository.findById(cartId)
-        //.orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
+        .orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
         Product product = productRepository.findById(productId)
-        // .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+         .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
         CartItem cartItem = cartItemRepository.findByCartAndProduct(cart, product);
         if (cartItem != null) {
@@ -69,7 +69,7 @@ public class CartItemServiceImpl implements ICartItemService {
                 cartItemRepository.save(cartItem);
             }
         } else {
-            //  throw new ResourceNotFoundException("CartItem not found");
+              throw new ResourceNotFoundException("CartItem not found");
         }
 
         return convertToDto(cartItem);
@@ -78,24 +78,24 @@ public class CartItemServiceImpl implements ICartItemService {
     @Override
     public void removeCartItem(Long cartId, Long productId) {
         Cart cart = cartRepository.findById(cartId)
-        //  .orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
+          .orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
         Product product = productRepository.findById(productId)
-        //    .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
         CartItem cartItem = cartItemRepository.findByCartAndProduct(cart, product);
         if (cartItem != null) {
             cartItemRepository.delete(cartItem);
         } else {
-            //  throw new ResourceNotFoundException("CartItem not found");
+              throw new ResourceNotFoundException("CartItem not found");
         }
     }
 
     @Override
     public List<CartItemDto> getCartItems(Long cartId) {
         Cart cart = cartRepository.findById(cartId)
-        // .orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
-
-        return cartItemRepository.findByCart(cart).stream()
+                .orElseThrow(() -> new ResourceNotFoundException("Cart with ID " + cartId + " not found"));
+        List<CartItem> cartItems = cartItemRepository.findByCart(cart);
+        return cartItems.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }

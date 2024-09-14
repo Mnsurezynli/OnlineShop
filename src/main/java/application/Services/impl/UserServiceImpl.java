@@ -1,18 +1,16 @@
 package application.Services.impl;
 
-import application.Dto.CartDto;
 import application.Dto.UserDto;
 import application.Dto.UserProfileDto;
 import application.Repository.UserRepository;
 import application.Services.IUserService;
+import application.exception.*;
 import application.model.User;
 import application.model.UserProfile;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.transaction.Transactional;
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -31,64 +29,54 @@ public class UserServiceImpl implements IUserService {
     @Transactional
     @Override
     public void register(UserDto userDto) {
-        Optional<User> User = userRepository.findByUsernameAndPassword(userDto.getUsername(), userDto.getPassword());
-        if (User.isPresent()) {
-            System.out.println("کاربر با نام کاربری موجود است");// یوزر الردی ایگزیست اینجا میخوام اکسپشن بزارم
-        } else {
+        Optional<User> User = Optional.ofNullable(userRepository.findByUsernameAndPassword(userDto.getUsername(), userDto.getPassword())
+                .orElseThrow(() -> new ResourceAlreadyExistsException("User Already exists")));
             User user = convertToEntity(userDto);
             userRepository.saveAndFlush(user);
             System.out.println("Registration was successful ");
-        }
     }
 
     @Validated
     @Override
     public void Login(UserDto userDto) {
-        Optional<User> User = userRepository.findByUsernameAndPassword(userDto.getUsername(), userDto.getPassword());
-        if (User.isPresent()) {
+        Optional<User> user = userRepository.findByUsernameAndPassword(userDto.getUsername(), userDto.getPassword());
+        if (user.isPresent()) {
             System.out.println("Login was successful");
         } else {
-            System.out.println("The username or password is incorrect ");
-           // اینولید عدم وجود کاربر
+            throw new InvalidInputException("Invalid username or password");
         }
     }
+
+
     @Validated
     @Transactional
     @Override
     public UserDto update(Long id, UserDto userDto) {
-        Optional<User> user = userRepository.findById(userDto.getId());
-        if (user.isPresent()) {
-            User user1 = convertToEntity(userDto);
-            userRepository.saveAndFlush(user1);
-            System.out.println("Profile information updated successfully");
-        } else {
-            System.out.println("User not found");//user not found
-        }
+        Optional<User> user = Optional.ofNullable(userRepository.findById(userDto.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + id)));
+        User user1 = convertToEntity(userDto);
+        userRepository.saveAndFlush(user1);
+        System.out.println("Profile information updated successfully");
         return userDto;
     }
 
     @Transactional
     @Override
     public void deleteById(Long id) {
-        Optional<User> user = userRepository.findById(id);
-        if (user.isPresent()) {
-            userRepository.deleteById(id);
-            System.out.println("User deleted successfully");
-        } else {
-            System.out.println("User not found َََ");//یوزر نات فوند
-        }
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + id));
+
+        userRepository.deleteById(id);
+        System.out.println("User deleted successfully");
     }
 
 
     @Override
     public UserDto getById(Long id) {
-        Optional<User> user = userRepository.findById(id);
-        if (user.isPresent()) {
-            return convertToDto(user.get());
-        } else {
-            System.out.println("User not found");//user not د
-        }
-        return null;
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id" + id));
+
+        return convertToDto(user);
     }
 
     @Override

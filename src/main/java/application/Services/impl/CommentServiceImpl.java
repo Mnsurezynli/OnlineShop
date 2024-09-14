@@ -5,6 +5,7 @@ import application.Repository.CommentRepository;
 import application.Repository.ProductRepository;
 import application.Repository.UserRepository;
 import application.Services.ICommentService;
+import application.exception.ResourceNotFoundException;
 import application.model.Comment;
 import application.model.Product;
 import application.model.User;
@@ -12,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -31,13 +31,14 @@ public class CommentServiceImpl implements ICommentService {
     public CommentServiceImpl(CommentRepository commentRepository) {
         this.commentRepository = commentRepository;
     }
+
     @Transactional
     @Override
     public CommentDto create(CommentDto commentDto) {
         Product product = productRepository.findById(commentDto.getProductId())
-                .orElseThrow(() -> new EntityNotFoundException("Product not found with id " + commentDto.getProductId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id " + commentDto.getProductId()));
         User user = userRepository.findById(commentDto.getUserId())
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id " + commentDto.getUserId()));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + commentDto.getUserId()));
 
         Comment comment = new Comment();
         comment.setText(commentDto.getText());
@@ -49,6 +50,7 @@ public class CommentServiceImpl implements ICommentService {
         return convertToDto(Comment);
 
     }
+
     @Transactional
     @Override
     public void deleteById(Long id) {
@@ -57,13 +59,15 @@ public class CommentServiceImpl implements ICommentService {
             commentRepository.deleteById(id);
             System.out.println("Comment deleted successfully");
         } else {
-            System.out.println("Comment not found َََ");//entity not found
+            throw new ResourceNotFoundException("Comment with ID " + id + " not found.");
         }
     }
 
     @Override
-    public Optional<CommentDto> getCommentById(Long id) {
-        return commentRepository.findById(id).map(this::convertToDto);//entity not found
+    public CommentDto getCommentById(Long id) {
+        return Optional.ofNullable(commentRepository.findById(id)
+                .map(this::convertToDto)
+                .orElseThrow(() -> new ResourceNotFoundException("Comment with ID " + id + " not found.")));
     }
 
     @Override
@@ -75,16 +79,24 @@ public class CommentServiceImpl implements ICommentService {
 
     @Override
     public List<CommentDto> getByProductId(Long productId) {
-        return commentRepository.findByProductId(productId).stream()
+        List<Comment> comments = commentRepository.findByProductId(productId);
+        if (comments.isEmpty()) {
+            throw new ResourceNotFoundException("No comments found for product with ID " + productId);
+        }
+        return comments.stream()
                 .map(this::convertToDto)
-                .collect(Collectors.toList());//resource
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<CommentDto> getByUserId(Long userId) {
-        return commentRepository.findByUserId(userId).stream()
+        List<Comment> comments = commentRepository.findByUserId(userId);
+        if (comments.isEmpty()) {
+            throw new ResourceNotFoundException("No comments found for user with ID " + userId);
+        }
+        return comments.stream()
                 .map(this::convertToDto)
-                .collect(Collectors.toList());//resource
+                .collect(Collectors.toList());
     }
 
     public CommentDto convertToDto(Comment comment) {

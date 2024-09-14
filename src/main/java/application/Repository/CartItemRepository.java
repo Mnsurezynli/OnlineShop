@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Repository;
 
-import java.util.Arrays;
+import java.util.List;
 
 @Repository
 @EnableJpaRepositories
@@ -16,5 +16,5 @@ public interface CartItemRepository extends JpaRepository<CartItem,Long> {
 
     CartItem findByCartAndProduct(Cart cart, Product product);
 
-    Arrays findByCart(Cart cart);
+    List<CartItem> findByCart(Cart cart);
 }

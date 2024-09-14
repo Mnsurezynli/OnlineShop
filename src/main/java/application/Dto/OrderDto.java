@@ -2,6 +2,7 @@ package application.Dto;
 
 import application.model.CartItem;
 import application.model.OrderItem;
+import application.model.Product;
 import application.model.User;
 
 import java.time.LocalDate;
@@ -15,6 +16,8 @@ public class OrderDto {
     private String status;
     private LocalDate date;
     private List<OrderItem> orderItems;
+    private String userId;
+
     private User user;
 
     private List<CartItemDto> cartItems;
@@ -58,13 +61,6 @@ public class OrderDto {
         this.orderItems = orderItems;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
 
     public List<CartItemDto> getCartItems() {
         return cartItems;
@@ -72,6 +68,22 @@ public class OrderDto {
 
     public void setCartItems(List<CartItemDto> cartItems) {
         this.cartItems = cartItems;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
 

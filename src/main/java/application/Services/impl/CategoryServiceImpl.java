@@ -4,6 +4,7 @@ import application.Dto.CategoryDto;
 import application.Dto.ProductDto;
 import application.Repository.CategoryRepository;
 import application.Services.ICategoryService;
+import application.exception.ResourceNotFoundException;
 import application.model.Category;
 import application.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static java.util.stream.Nodes.collect;
 
 @Service
 public class CategoryServiceImpl implements ICategoryService {
@@ -39,7 +38,7 @@ public class CategoryServiceImpl implements ICategoryService {
     @Override
     public CategoryDto update(Long id, CategoryDto categoryDto) {
         Category category = categoryRepository.findById(id)
-        // .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+         .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
         category.setName(categoryDto.getName());
         category = categoryRepository.save(category);
         return convertToDto(category);
@@ -49,14 +48,14 @@ public class CategoryServiceImpl implements ICategoryService {
     @Override
     public void deleteById(Long id) {
         Category category = categoryRepository.findById(id)
-        //   .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+           .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
         categoryRepository.delete(category);
     }
 
     @Override
     public CategoryDto getById(Long id) {
         Category category = categoryRepository.findById(id)
-        //  .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+          .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
         return convertToDto(category);
     }
 
@@ -71,7 +70,7 @@ public class CategoryServiceImpl implements ICategoryService {
     @Override
     public List<ProductDto> getProductsByCategoryId(Long id) {
         Category category = categoryRepository.findById(id)
-        //.orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+        .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
         return category.getProducts().stream()
                 .map(productService::convertToDto)
                 .collect(Collectors.toList());
