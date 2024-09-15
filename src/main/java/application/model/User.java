@@ -10,7 +10,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "username")
+    @Column(name = "username",unique = true)
     private String username;
 
     @Column(name = "pasword")
@@ -19,12 +19,12 @@ public class User {
     @Column(name = "email")
     private String email;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "user_profile_id", referencedColumnName = "id")
     private UserProfile userProfile;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Cart cart;
-
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Cart> cart;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Order> orders;
 
@@ -90,11 +90,11 @@ public class User {
         this.comments = comments;
     }
 
-    public Cart getCart() {
+    public List<Cart> getCart() {
         return cart;
     }
 
-    public void setCart(Cart cart) {
+    public void setCart(List<Cart> cart) {
         this.cart = cart;
     }
 }

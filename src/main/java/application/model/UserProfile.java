@@ -2,29 +2,27 @@ package application.model;
 
 import javax.persistence.*;
 
-@Table(name = "userProfile")
+@Table(name = "user_profile")
 @Entity
 public class UserProfile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "first-Name")
+    @Column(name = "firstـname")
     private String firstName;
 
-    @Column(name = "last-Name")
+    @Column(name = "lastـname")
     private String lastName;
 
     @Column(name = "address")
     private String address;
 
-    @Column(name = "phone-Number")
+    @Column(name = "phoneـnumber")
     private String phoneNumber;
 
-    @OneToOne
-    @JoinColumn(name = "user_id")
+    @OneToOne(mappedBy = "userProfile")
     private User user;
-
     public Long getId() {
         return id;
     }

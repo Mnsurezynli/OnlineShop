@@ -13,5 +13,8 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQL5Dialect
     hibernate:
-      ddl-auto: update
+      cache:
+        use_second_level_cache: false
+        use_query_cache: false
+      ddl-auto: create
       show-sql: true

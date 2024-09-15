@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/OrderItem")
@@ -32,10 +33,12 @@ public class OrderItemController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<List<OrderItemDto>> getOrderItemById(@PathVariable("id") Long id) {
-        List<OrderItemDto> orderItemDtos = iOrderItemService.getOrderItemById(id);
-        return new ResponseEntity<>(orderItemDtos, HttpStatus.OK);
+    public ResponseEntity<OrderItemDto> getOrderItemById(@PathVariable("id") Long id) {
+        Optional<OrderItemDto> orderItemDto = iOrderItemService.getOrderItemById(id);
+        return orderItemDto.map(dto -> new ResponseEntity<>(dto, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
+
     @GetMapping
     public ResponseEntity<List<OrderItemDto>> getAllOrderItems() {
         List<OrderItemDto> orderItemDtos =  iOrderItemService.getAll();

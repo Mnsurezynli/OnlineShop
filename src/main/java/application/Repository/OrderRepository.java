@@ -14,11 +14,11 @@ import java.util.Optional;
 public interface OrderRepository extends JpaRepository<Order,Long> {
    Optional<Order> findByIdAndUserId(Long orderId, Long userId);
 
-   Order createOrder(Order order);
+   Order saveAndFlush(Order order);
 
-   Order  trackOrder(Long orderId);
+ //  Order  trackOrder(Long orderId);
 
-   void cancelOrder(Long userId, Long orderId);
+   //void cancelOrder(Long userId, Long orderId);
 
    Optional<Order> findById(Long id);
 

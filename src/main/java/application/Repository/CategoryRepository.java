@@ -3,7 +3,9 @@ package application.Repository;
 import application.model.Category;
 import application.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,7 +17,7 @@ public interface CategoryRepository extends JpaRepository<Category,Long> {
 
     Category saveAndFlush(Category category);
 
-    Category update(Long id, Category category);
+   // Category update(Long id, Category category);
 
     void deleteById(Long id);
 
@@ -23,5 +25,6 @@ public interface CategoryRepository extends JpaRepository<Category,Long> {
 
     List<Category> findAll();
 
-    List<Product> findProductsByCategoryId(Long id);
+    @Query("SELECT p FROM Product p WHERE p.category.id = :categoryId")
+    List<Product> findProductsByCategoryId(@Param("categoryId") Long categoryId);
 }

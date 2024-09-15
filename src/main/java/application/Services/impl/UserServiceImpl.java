@@ -2,6 +2,7 @@ package application.Services.impl;
 
 import application.Dto.UserDto;
 import application.Dto.UserProfileDto;
+import application.Repository.UserProfileRepository;
 import application.Repository.UserRepository;
 import application.Services.IUserService;
 import application.exception.*;
@@ -20,6 +21,7 @@ public class UserServiceImpl implements IUserService {
 
 
     private UserRepository userRepository;
+    private UserProfileRepository userProfileRepository;
 
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -29,10 +31,12 @@ public class UserServiceImpl implements IUserService {
     @Transactional
     @Override
     public void register(UserDto userDto) {
-        Optional<User> User = Optional.ofNullable(userRepository.findByUsernameAndPassword(userDto.getUsername(), userDto.getPassword())
-                .orElseThrow(() -> new ResourceAlreadyExistsException("User Already exists")));
-            User user = convertToEntity(userDto);
-            userRepository.saveAndFlush(user);
+        Optional<User> user = userRepository.findByUsername(userDto.getUsername());
+                if(user.isPresent()){
+               throw  new ResourceAlreadyExistsException("User Already exists");
+                }
+            User user1= convertToEntity(userDto);
+        userRepository.saveAndFlush(user1);
             System.out.println("Registration was successful ");
     }
 
@@ -131,8 +135,9 @@ public class UserServiceImpl implements IUserService {
             userProfile.setAddress(userDto.getUserProfile().getAddress());
             userProfile.setPhoneNumber(userDto.getUserProfile().getPhoneNumber());
             user1.setUserProfile(userProfile);
+            System.out.println("UserProfile set to User: " + userProfile);
         }
-        return user1;
+            return user1;
+        }
 
-    }
 }

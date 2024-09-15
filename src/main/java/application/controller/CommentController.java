@@ -1,6 +1,7 @@
 package application.controller;
 
 import application.Dto.CommentDto;
+import application.Dto.OrderItemDto;
 import application.Services.ICommentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,9 +39,13 @@ public class CommentController {
 
     @GetMapping("/{id}")
     public ResponseEntity<CommentDto> getCommentById(@PathVariable Long id) {
-        CommentDto commentDto = iCommentService.getCommentById(id);
-        return new ResponseEntity<>(commentDto,HttpStatus.OK);
+        Optional<CommentDto> commentDto = iCommentService.getCommentById(id);
+        return commentDto
+                .map(dto -> new ResponseEntity<>(dto, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
+
+
 
     @GetMapping
     public ResponseEntity<List<CommentDto>> getAllComments() {

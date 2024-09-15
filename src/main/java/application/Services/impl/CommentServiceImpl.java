@@ -64,7 +64,7 @@ public class CommentServiceImpl implements ICommentService {
     }
 
     @Override
-    public CommentDto getCommentById(Long id) {
+    public Optional<CommentDto> getCommentById(Long id) {
         return Optional.ofNullable(commentRepository.findById(id)
                 .map(this::convertToDto)
                 .orElseThrow(() -> new ResourceNotFoundException("Comment with ID " + id + " not found.")));

@@ -59,7 +59,7 @@ public class OrderItemServiceImpl implements IOrderItemService {
 
 
     @Override
-    public List<OrderItemDto> getOrderItemById(Long id) {
+    public Optional<OrderItemDto> getOrderItemById(Long id) {
         return Optional.ofNullable(orderItemRepository.findOrderItemById(id)
                 .map(this::convertToDto)
                 .orElseThrow(() -> new ResourceNotFoundException("OrderItem with ID " + id + " not found.")));
