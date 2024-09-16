@@ -1,6 +1,5 @@
 package application.Repository;
 
-import application.Dto.OrderItemDto;
 import application.model.OrderItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -11,12 +10,13 @@ import java.util.Optional;
 
 @Repository
 @EnableJpaRepositories
-public interface OrderItemRepository extends JpaRepository<OrderItem,Long> {
+public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 
-    OrderItem saveAndFlush (OrderItem orderItem);
     void deleteById(Long orderItemId);
 
-    Optional<OrderItem> findOrderItemById(Long id);
+    Optional<OrderItem> findById(Long id);
+
     List<OrderItem> findAll();
-    List<OrderItem> findOrderItemsByOrderId(Long orderId);
+
+    List<OrderItem> findByOrderId(Long orderId);
 }

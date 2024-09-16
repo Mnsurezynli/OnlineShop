@@ -2,7 +2,9 @@ package application.model;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Table(name = "`order`")
 @Entity
@@ -22,8 +24,8 @@ public class Order {
     private LocalDate date;
 
 
-    @OneToMany(mappedBy = "order" ,cascade = CascadeType.ALL ,orphanRemoval = true)
-    private List<OrderItem>orderItems;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<OrderItem> orderItems = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -62,13 +64,7 @@ public class Order {
         this.date = date;
     }
 
-    public List<OrderItem> getOrderItems() {
-        return orderItems;
-    }
 
-    public void setOrderItems(List<OrderItem> orderItems) {
-        this.orderItems = orderItems;
-    }
 
     public User getUser() {
         return user;
@@ -76,5 +72,13 @@ public class Order {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Set<OrderItem> getOrderItems() {
+        return orderItems;
+    }
+
+    public void setOrderItems(Set<OrderItem> orderItems) {
+        this.orderItems = orderItems;
     }
 }

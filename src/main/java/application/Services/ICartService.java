@@ -1,10 +1,8 @@
 package application.Services;
 
 import application.Dto.CartDto;
-import application.Dto.CartItemDto;
 
 public interface ICartService {
-
 
     void addProductToCart(Long cartId, Long productId, int quantity);
 
@@ -14,7 +12,5 @@ public interface ICartService {
 
     void removeProductFromCart(Long cartId, Long productId);
 }
-
-
 
 

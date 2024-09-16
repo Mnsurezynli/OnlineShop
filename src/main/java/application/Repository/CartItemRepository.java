@@ -11,8 +11,7 @@ import java.util.List;
 
 @Repository
 @EnableJpaRepositories
-public interface CartItemRepository extends JpaRepository<CartItem,Long> {
-
+public interface CartItemRepository extends JpaRepository<CartItem, Long> {
 
     CartItem findByCartAndProduct(Cart cart, Product product);
 

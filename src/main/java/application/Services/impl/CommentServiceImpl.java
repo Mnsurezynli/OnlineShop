@@ -14,22 +14,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class CommentServiceImpl implements ICommentService {
 
+    private final CommentRepository commentRepository;
+    private final ProductRepository productRepository;
+    private final UserRepository userRepository;
 
-    private CommentRepository commentRepository;
     @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    public CommentServiceImpl(CommentRepository commentRepository) {
+    public CommentServiceImpl(CommentRepository commentRepository, ProductRepository productRepository, UserRepository userRepository) {
         this.commentRepository = commentRepository;
+        this.productRepository = productRepository;
+        this.userRepository = userRepository;
     }
 
     @Transactional
@@ -46,16 +44,14 @@ public class CommentServiceImpl implements ICommentService {
         comment.setProduct(product);
         comment.setUser(user);
 
-        Comment Comment = commentRepository.save(comment);
-        return convertToDto(Comment);
-
+        Comment savedComment = commentRepository.save(comment);
+        return convertToDto(savedComment);
     }
 
     @Transactional
     @Override
     public void deleteById(Long id) {
-        Optional<Comment> comment = commentRepository.findById(id);
-        if (comment.isPresent()) {
+        if (commentRepository.existsById(id)) {
             commentRepository.deleteById(id);
             System.out.println("Comment deleted successfully");
         } else {
@@ -64,10 +60,10 @@ public class CommentServiceImpl implements ICommentService {
     }
 
     @Override
-    public Optional<CommentDto> getCommentById(Long id) {
-        return Optional.ofNullable(commentRepository.findById(id)
-                .map(this::convertToDto)
-                .orElseThrow(() -> new ResourceNotFoundException("Comment with ID " + id + " not found.")));
+    public CommentDto getCommentById(Long id) {
+        Comment comment = commentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Comment with ID " + id + " not found."));
+        return convertToDto(comment);
     }
 
     @Override
@@ -99,8 +95,7 @@ public class CommentServiceImpl implements ICommentService {
                 .collect(Collectors.toList());
     }
 
-    public CommentDto convertToDto(Comment comment) {
-
+    private CommentDto convertToDto(Comment comment) {
         if (comment == null) {
             return null;
         }
@@ -108,10 +103,12 @@ public class CommentServiceImpl implements ICommentService {
         commentDto.setId(comment.getId());
         commentDto.setText(comment.getText());
         commentDto.setDate(comment.getDate());
+        commentDto.setProductId(comment.getProduct().getId());
+        commentDto.setUserId(comment.getUser().getId());
         return commentDto;
     }
 
-    public Comment convertToEntity(CommentDto commentDto) {
+    private Comment convertToEntity(CommentDto commentDto) {
         if (commentDto == null) {
             return null;
         }
@@ -120,6 +117,5 @@ public class CommentServiceImpl implements ICommentService {
         comment.setText(commentDto.getText());
         comment.setDate(commentDto.getDate());
         return comment;
-
     }
 }

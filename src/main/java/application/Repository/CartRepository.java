@@ -12,18 +12,10 @@ import org.springframework.stereotype.Repository;
 @EnableJpaRepositories
 public interface CartRepository extends JpaRepository<Cart, Long> {
 
-   // void save(Long cartId, Long productId, int quantity);
-
     @Query("SELECT c FROM Cart c WHERE c.id = :cartId")
-    Cart findCartByById(@Param("cartId") Long cartId);
-
-
-   // void updateCartItem(Long cartId, Long productId, int newQuantity);
+    Cart findCartById(@Param("cartId") Long cartId);
 
     @Modifying
     @Query("DELETE FROM CartItem ci WHERE ci.cart.id = :cartId AND ci.product.id = :productId")
-    void removeProductFromCart(@Param("cartId") Long cartId,  @Param("productId") Long productId);
-
+    void removeProductFromCart(@Param("cartId") Long cartId, @Param("productId") Long productId);
 }
-
-

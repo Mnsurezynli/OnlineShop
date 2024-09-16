@@ -1,30 +1,14 @@
+
 package application.Dto;
 
-import application.model.Cart;
-import application.model.Comment;
-import application.model.Order;
-import application.model.UserProfile;
-
-import java.util.List;
-
 public class UserDto {
-
     private Long id;
-
     private String username;
-
     private String password;
-
     private String email;
+    private Long userProfileId;
 
     private UserProfileDto userProfileDto;
-
-
-//     private Cart cart;
-//
-//     private List<Order> orders;
-//
-//     private List<Comment>comments;
 
     public Long getId() {
         return id;
@@ -42,6 +26,14 @@ public class UserDto {
         this.username = username;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -50,37 +42,12 @@ public class UserDto {
         this.email = email;
     }
 
-
-//    public Cart getCart() {
-//        return cart;
-//    }
-//
-//    public void setCart(Cart cart) {
-//        this.cart = cart;
-//    }
-//
-//    public List<Order> getOrders() {
-//        return orders;
-//    }
-//
-//    public void setOrders(List<Order> orders) {
-//        this.orders = orders;
-//    }
-//
-//    public List<Comment> getComments() {
-//        return comments;
-//    }
-//
-//    public void setComments(List<Comment> comments) {
-//        this.comments = comments;
-//    }
-
-    public String getPassword() {
-        return password;
+    public Long getUserProfileId() {
+        return userProfileId;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setUserProfileId(Long userProfileId) {
+        this.userProfileId = userProfileId;
     }
 
     public UserProfileDto getUserProfileDto() {
@@ -91,4 +58,3 @@ public class UserDto {
         this.userProfileDto = userProfileDto;
     }
 }
-

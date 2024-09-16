@@ -5,22 +5,24 @@ import application.Dto.UserProfileDto;
 import application.Repository.UserProfileRepository;
 import application.Repository.UserRepository;
 import application.Services.IUserService;
-import application.exception.*;
+import application.exception.InvalidInputException;
+import application.exception.ResourceAlreadyExistsException;
+import application.exception.ResourceNotFoundException;
 import application.model.User;
 import application.model.UserProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 @Service
 public class UserServiceImpl implements IUserService {
 
-    private  UserRepository userRepository;
-    private  UserProfileRepository userProfileRepository;
+    private final UserRepository userRepository;
+    private final UserProfileRepository userProfileRepository;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, UserProfileRepository userProfileRepository) {
@@ -34,15 +36,14 @@ public class UserServiceImpl implements IUserService {
     public void register(UserDto userDto) {
         Optional<User> existingUser = userRepository.findByUsername(userDto.getUsername());
         if (existingUser.isPresent()) {
-            throw new ResourceAlreadyExistsException("User Already exists");
+            throw new ResourceAlreadyExistsException("User already exists");
         }
         User user = convertToEntity(userDto);
         if (user.getUserProfile() != null) {
             userProfileRepository.save(user.getUserProfile());
         }
-
         userRepository.saveAndFlush(user);
-        System.out.println("Registration was successful ");
+        System.out.println("Registration was successful");
     }
 
     @Validated
@@ -69,16 +70,13 @@ public class UserServiceImpl implements IUserService {
                 userProfile = new UserProfile();
                 user.setUserProfile(userProfile);
             }
-
             userProfile.setFirstName(userDto.getUserProfileDto().getFirstName());
             userProfile.setLastName(userDto.getUserProfileDto().getLastName());
             userProfile.setAddress(userDto.getUserProfileDto().getAddress());
             userProfile.setPhoneNumber(userDto.getUserProfileDto().getPhoneNumber());
-
             userProfileRepository.save(userProfile);
         }
 
-        // Update User details
         user.setUsername(userDto.getUsername());
         user.setPassword(userDto.getPassword());
         user.setEmail(userDto.getEmail());
@@ -87,7 +85,6 @@ public class UserServiceImpl implements IUserService {
         System.out.println("Profile information updated successfully");
         return convertToDto(user);
     }
-
 
     @Transactional
     @Override
@@ -106,7 +103,6 @@ public class UserServiceImpl implements IUserService {
     public UserDto getById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + id));
-
         return convertToDto(user);
     }
 
@@ -155,5 +151,4 @@ public class UserServiceImpl implements IUserService {
 
         return user;
     }
-
 }

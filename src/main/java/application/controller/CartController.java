@@ -2,44 +2,43 @@ package application.controller;
 
 import application.Dto.CartDto;
 import application.Services.ICartService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
- @RequestMapping("/api/cart")
+@RequestMapping("/api/carts")
 public class CartController {
 
-    private ICartService iCartService;
+    private final ICartService cartService;
 
-    public CartController(ICartService iCartService) {
-        this.iCartService = iCartService;
+    @Autowired
+    public CartController(ICartService cartService) {
+        this.cartService = cartService;
     }
 
-
     @PostMapping("/{cartId}/products/{productId}")
-    public ResponseEntity<String> addProductToCart(@PathVariable Long cartId, @PathVariable Long productId, @RequestParam  int quantity){
-        iCartService.addProductToCart(cartId, productId, quantity);
-        return new ResponseEntity<>("the product add to cart", HttpStatus.OK);
+    public ResponseEntity<Void> addProductToCart(@PathVariable Long cartId, @PathVariable Long productId, @RequestParam int quantity) {
+        cartService.addProductToCart(cartId, productId, quantity);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/{cartId}")
     public ResponseEntity<CartDto> viewCart(@PathVariable Long cartId) {
-        CartDto cartDto = iCartService.viewCart(cartId);
-        return new ResponseEntity<>(cartDto,HttpStatus.OK);
+        CartDto cartDto = cartService.viewCart(cartId);
+        return ResponseEntity.ok(cartDto);
     }
-
 
     @PutMapping("/{cartId}/products/{productId}")
-    public ResponseEntity<String> updateCartItem(@PathVariable Long cartId, @PathVariable Long productId, @RequestParam int newQuantity) {
-        iCartService.updateCartItem(cartId, productId, newQuantity);
-        return new ResponseEntity<>("updated cartItem ",HttpStatus.OK);
+    public ResponseEntity<Void> updateCartItem(@PathVariable Long cartId, @PathVariable Long productId, @RequestParam int newQuantity) {
+        cartService.updateCartItem(cartId, productId, newQuantity);
+        return ResponseEntity.noContent().build();
     }
 
-    // حذف محصول از سبد خرید
     @DeleteMapping("/{cartId}/products/{productId}")
-    public ResponseEntity<String> removeProductFromCart(@PathVariable Long cartId, @PathVariable Long productId) {
-        iCartService.removeProductFromCart(cartId, productId);
-      return new ResponseEntity<>("the product removed from the cart",HttpStatus.OK);
+    public ResponseEntity<Void> removeProductFromCart(@PathVariable Long cartId, @PathVariable Long productId) {
+        cartService.removeProductFromCart(cartId, productId);
+        return ResponseEntity.noContent().build();
     }
 }

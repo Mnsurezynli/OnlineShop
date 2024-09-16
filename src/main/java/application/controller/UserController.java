@@ -1,58 +1,58 @@
 package application.controller;
-
 import application.Dto.UserDto;
 import application.Services.IUserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.GeneratedValue;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/users")
 public class UserController {
 
-    private IUserService iUserService;
+    private final IUserService userService;
 
-    public UserController(IUserService iUserService) {
-        this.iUserService = iUserService;
+    @Autowired
+    public UserController(IUserService userService) {
+        this.userService = userService;
     }
 
-
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody UserDto userDto) {
-        iUserService.register(userDto);
-        return new ResponseEntity<>("Registration was successfull", HttpStatus.CREATED);
+    public ResponseEntity<String> register(@RequestBody @Validated UserDto userDto) {
+        userService.register(userDto);
+        return new ResponseEntity<>("Registration was successful", HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UserDto userDto) {
-        iUserService.Login(userDto);
-        return new ResponseEntity<>("login was successfull", HttpStatus.OK);
+    public ResponseEntity<String> Login(@RequestBody @Validated UserDto userDto) {
+        userService.Login(userDto);
+        return new ResponseEntity<>("Login was successful", HttpStatus.OK);
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<UserDto> update(@PathVariable Long id, @RequestBody UserDto userDto) {
-        UserDto userDto1 = iUserService.update(id, userDto);
-        return new ResponseEntity<>(userDto1, HttpStatus.OK);
+    @PutMapping("/{id}")
+    public ResponseEntity<UserDto> update(@PathVariable Long id, @RequestBody @Validated UserDto userDto) {
+        UserDto updatedUser = userService.update(id, userDto);
+        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteById(@PathVariable Long id) {
-        iUserService.deleteById(id);
-        return new ResponseEntity<>("deleted successfully ", HttpStatus.OK);
+        userService.deleteById(id);
+        return new ResponseEntity<>("User deleted successfully", HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getById(@PathVariable Long id) {
-        UserDto userDto = iUserService.getById(id);
+        UserDto userDto = userService.getById(id);
         return new ResponseEntity<>(userDto, HttpStatus.OK);
     }
 
     @GetMapping
     public ResponseEntity<List<UserDto>> getAll() {
-        List<UserDto> userDtos = iUserService.getAll();
-        return new ResponseEntity<>(userDtos, HttpStatus.OK);
+        List<UserDto> users = userService.getAll();
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 }

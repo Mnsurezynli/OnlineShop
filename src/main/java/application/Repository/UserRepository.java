@@ -11,21 +11,15 @@ import java.util.Optional;
 
 @Repository
 @EnableJpaRepositories
-public interface UserRepository extends JpaRepository<User,Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
-     User saveAndFlush(User user);
-
-      Optional<User> findByUsernameAndPassword(String username , String password);
-
-      Optional<User> update(Long id ,UserDto userDto);
+    Optional<User> findByUsernameAndPassword(String username, String password);
 
     Optional<User> findByUsername(String username);
 
-      void deleteById(Long id);
+    void deleteById(Long id);
 
-      Optional<User> findById(Long id);
+    Optional<User> findById(Long id);
 
-      List<User> findAll();
-
-
+    List<User> findAll();
 }

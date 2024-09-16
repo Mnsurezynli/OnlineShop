@@ -2,7 +2,8 @@ package application.model;
 
 import javax.persistence.*;
 
-@Table(name = "cartItem")
+
+@Table(name = "cart_item")
 @Entity
 public class CartItem {
 
@@ -13,7 +14,6 @@ public class CartItem {
     @Column(name = "number")
     private int number;
 
-
     @ManyToOne
     @JoinColumn(name = "cart_id")
     private Cart cart;
@@ -21,6 +21,7 @@ public class CartItem {
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
+
 
     public Long getId() {
         return id;

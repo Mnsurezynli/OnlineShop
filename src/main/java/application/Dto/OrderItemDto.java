@@ -4,15 +4,12 @@ import application.model.Order;
 import application.model.Product;
 
 public class OrderItemDto {
-
     private Long id;
-
     private int number;
-
+    private Long productId;
     private Long orderId;
 
-    private Long productId;
-
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -29,19 +26,19 @@ public class OrderItemDto {
         this.number = number;
     }
 
-    public Long getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
-    }
-
     public Long getProductId() {
         return productId;
     }
 
     public void setProductId(Long productId) {
         this.productId = productId;
+    }
+
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
     }
 }

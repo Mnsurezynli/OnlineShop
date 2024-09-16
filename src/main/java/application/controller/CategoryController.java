@@ -1,44 +1,50 @@
 package application.controller;
 
 import application.Dto.CategoryDto;
+import application.Dto.ProductDto;
 import application.Services.ICategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import java.util.List;
 
 @RestController
-@RequestMapping("/api/category")
+@RequestMapping("/api/categories")
 public class CategoryController {
 
-    private ICategoryService iCategoryService;
+    private final ICategoryService categoryService;
 
-    public CategoryController(ICategoryService iCategoryService) {
-        this.iCategoryService = iCategoryService;
+    @Autowired
+    public CategoryController(ICategoryService categoryService) {
+        this.categoryService = categoryService;
     }
 
     @PostMapping("/create")
-    public ResponseEntity <CategoryDto> create(@RequestBody @Valid CategoryDto categoryDto) {
-        CategoryDto categoryDto1 = iCategoryService.create(categoryDto);
-        return new ResponseEntity<>(categoryDto1, HttpStatus.CREATED);
+    public ResponseEntity<CategoryDto> create(@RequestBody CategoryDto categoryDto) {
+        CategoryDto createdCategory = categoryService.create(categoryDto);
+        return new ResponseEntity<>(createdCategory, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<CategoryDto> update(@PathVariable Long id, @RequestBody @Valid CategoryDto categoryDto) {
-        CategoryDto categoryDto1 = iCategoryService.update(id, categoryDto);
-        return new ResponseEntity<>(categoryDto1,HttpStatus.OK);
-    }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteById(@PathVariable Long id) {
-        iCategoryService.deleteById(id);
-        return new ResponseEntity<>("category deleted successfully",HttpStatus.OK);
+    public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
+        categoryService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryDto> getById(@PathVariable Long id) {
-        CategoryDto categoryDto = iCategoryService.getById(id);
-        return new ResponseEntity<>(categoryDto,HttpStatus.OK);
+    public ResponseEntity<CategoryDto> getCategoryById(@PathVariable Long id) {
+        CategoryDto categoryDto = categoryService.getById(id);
+        return ResponseEntity.ok(categoryDto);
     }
+
+    @GetMapping()
+    public ResponseEntity<List<CategoryDto>> getAllCategories() {
+        List<CategoryDto> categories = categoryService.getAll();
+        return ResponseEntity.ok(categories);
+    }
+
+
 }

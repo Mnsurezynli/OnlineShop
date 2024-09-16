@@ -14,5 +14,5 @@ public interface IOrderService {
 
     OrderDto getById(Long id);
 
-     List<OrderDto> getAll();
+    List<OrderDto> getAll();
 }

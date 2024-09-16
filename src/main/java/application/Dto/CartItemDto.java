@@ -1,22 +1,23 @@
 package application.Dto;
-
 import application.model.Cart;
 import application.model.Product;
-
 public class CartItemDto {
-
-    private Long id ;
-
+    private Long id;
     private int number;
-
-    private Cart cart ;
-
-    private Product product;
-
-    private int quantity;
-
+    private Long cartId;
     private Long productId;
 
+    private ProductDto product;
+    private int quantity;
+
+    public CartItemDto(Long id, int number) {
+        this.id = id;
+        this.number = number;
+    }
+
+    public CartItemDto() {
+
+    }
 
     public Long getId() {
         return id;
@@ -34,19 +35,27 @@ public class CartItemDto {
         this.number = number;
     }
 
-    public Cart getCart() {
-        return cart;
+    public Long getCartId() {
+        return cartId;
     }
 
-    public void setCart(Cart cart) {
-        this.cart = cart;
+    public void setCartId(Long cartId) {
+        this.cartId = cartId;
     }
 
-    public Product getProduct() {
+    public Long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
+
+    public ProductDto getProduct() {
         return product;
     }
 
-    public void setProduct(Product product) {
+    public void setProduct(ProductDto product) {
         this.product = product;
     }
 
@@ -56,14 +65,5 @@ public class CartItemDto {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
-    }
-
-
-    public Long getProductId() {
-        return productId;
-    }
-
-    public void setProductId(Long productId) {
-        this.productId = productId;
     }
 }

@@ -2,38 +2,34 @@ package application.controller;
 
 import application.Dto.UserProfileDto;
 import application.Services.IUserProfileService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resources;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/userProfile")
+@RequestMapping("/userprofiles")
 public class UserProfileController {
 
-    private IUserProfileService iUserProfileService;
+    private final IUserProfileService userProfileService;
 
-    public UserProfileController(IUserProfileService iUserProfileService) {
-        this.iUserProfileService = iUserProfileService;
+    @Autowired
+    public UserProfileController(IUserProfileService userProfileService) {
+        this.userProfileService = userProfileService;
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<UserProfileDto> update(@PathVariable Long id, UserProfileDto userProfileDto) {
-        UserProfileDto userProfileDto1 = iUserProfileService.update(id, userProfileDto);
-        return new ResponseEntity<>(userProfileDto1, HttpStatus.OK);
+    @PutMapping("/{id}")
+    public UserProfileDto update(@PathVariable Long id, @RequestBody UserProfileDto userProfileDto) {
+        return userProfileService.update(id, userProfileDto);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserProfileDto> getById(@PathVariable Long id) {
-        UserProfileDto userProfileDto = iUserProfileService.getById(id);
-        return new ResponseEntity<>(userProfileDto, HttpStatus.OK);
+    public UserProfileDto getById(@PathVariable Long id) {
+        return userProfileService.getById(id);
     }
 
     @GetMapping
-    public ResponseEntity<List<UserProfileDto>> getAll() {
-        List<UserProfileDto> userProfileDtos = iUserProfileService.getAll();
-        return new ResponseEntity<>(userProfileDtos, HttpStatus.OK);
+    public List<UserProfileDto> getAll() {
+        return userProfileService.getAll();
     }
 }

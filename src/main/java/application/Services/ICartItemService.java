@@ -6,7 +6,6 @@ import java.util.List;
 
 public interface ICartItemService {
 
-
     CartItemDto addCartItem(Long cartId, Long productId, int quantity);
 
     CartItemDto updateCartItem(Long cartId, Long productId, int newQuantity);
@@ -14,8 +13,4 @@ public interface ICartItemService {
     void removeCartItem(Long cartId, Long productId);
 
     List<CartItemDto> getCartItems(Long cartId);
-
 }
-
-
-

@@ -2,7 +2,6 @@ package application.Services.impl;
 
 import application.Dto.CartDto;
 import application.Dto.CartItemDto;
-import application.Dto.ProductDto;
 import application.Repository.CartItemRepository;
 import application.Repository.CartRepository;
 import application.Repository.ProductRepository;
@@ -11,29 +10,33 @@ import application.exception.ResourceNotFoundException;
 import application.model.Cart;
 import application.model.CartItem;
 import application.model.Product;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.stream.Collectors;
 
 @Service
 public class CartServiceImpl implements ICartService {
 
-    private CartRepository cartRepository;
+    private final CartRepository cartRepository;
+    private final ProductRepository productRepository;
+    private final CartItemRepository cartItemRepository;
 
-    private ProductRepository productRepository;
-
-    private CartItemRepository cartItemRepository;
-
-    public CartServiceImpl(CartRepository cartRepository) {
+    @Autowired
+    public CartServiceImpl(CartRepository cartRepository, ProductRepository productRepository, CartItemRepository cartItemRepository) {
         this.cartRepository = cartRepository;
+        this.productRepository = productRepository;
+        this.cartItemRepository = cartItemRepository;
     }
 
     @Transactional
     @Override
     public void addProductToCart(Long cartId, Long productId, int quantity) {
         Cart cart = cartRepository.findById(cartId)
-            .orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cart not found with id " + cartId));
         Product product = productRepository.findById(productId)
-          .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id " + productId));
         CartItem existingCartItem = cartItemRepository.findByCartAndProduct(cart, product);
         if (existingCartItem != null) {
             existingCartItem.setNumber(existingCartItem.getNumber() + quantity);
@@ -45,25 +48,22 @@ public class CartServiceImpl implements ICartService {
             newCartItem.setNumber(quantity);
             cartItemRepository.save(newCartItem);
         }
-
     }
-
 
     @Override
     public CartDto viewCart(Long cartId) {
         Cart cart = cartRepository.findById(cartId)
-            .orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cart not found with id " + cartId));
         return convertToDto(cart);
     }
 
     @Transactional
     @Override
     public void updateCartItem(Long cartId, Long productId, int newQuantity) {
-
         Cart cart = cartRepository.findById(cartId)
-          .orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cart not found with id " + cartId));
         Product product = productRepository.findById(productId)
-           .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id " + productId));
 
         CartItem cartItem = cartItemRepository.findByCartAndProduct(cart, product);
         if (cartItem != null) {
@@ -74,49 +74,49 @@ public class CartServiceImpl implements ICartService {
                 cartItemRepository.save(cartItem);
             }
         } else {
-                throw new ResourceNotFoundException("CartItem not found");
+            throw new ResourceNotFoundException("CartItem not found with cart ID " + cartId + " and product ID " + productId);
         }
-
-
     }
 
     @Transactional
     @Override
     public void removeProductFromCart(Long cartId, Long productId) {
         Cart cart = cartRepository.findById(cartId)
-         .orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cart not found with id " + cartId));
         Product product = productRepository.findById(productId)
-         .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id " + productId));
 
         CartItem cartItem = cartItemRepository.findByCartAndProduct(cart, product);
         if (cartItem != null) {
             cartItemRepository.delete(cartItem);
         } else {
-            throw new ResourceNotFoundException("CartItem not found");
+            throw new ResourceNotFoundException("CartItem not found with cart ID " + cartId + " and product ID " + productId);
         }
     }
 
     public CartDto convertToDto(Cart cart) {
-
         if (cart == null) {
             return null;
         }
         CartDto cartDto = new CartDto();
         cartDto.setId(cart.getId());
         cartDto.setUser(cart.getUser());
-        cartDto.setCartItems(cart.getCartItems());
+        cartDto.setCartItems(cart.getCartItems().stream()
+                .map(cartItem -> new CartItemDto(cartItem.getId(), cartItem.getNumber()))
+                .collect(Collectors.toList()));
         return cartDto;
     }
 
-    public Cart convertToEntity(CartDto cartDto) {
-        if (cartDto == null) {
-            return null;
-        }
-        Cart cart = new Cart();
-        cart.setId(cartDto.getId());
-        cart.setUser(cartDto.getUser());
-        cart.setCartItems(cartDto.getCartItems());
-        return cart;
-    }
-
+//    public Cart convertToEntity(CartDto cartDto) {
+//        if (cartDto == null) {
+//            return null;
+//        }
+//        Cart cart = new Cart();
+//        cart.setId(cartDto.getId());
+//        cart.setUser(cartDto.getUser());
+//        cart.setCartItems(cartDto.getCartItems().stream()
+//                .map(cartItemDto -> new CartItem(cartItemDto.getId(), cartItemDto.getNumber()))
+//                .collect(Collectors.toList()));
+//        return cart;
+//    }
 }

@@ -1,7 +1,9 @@
 package application.model;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Table(name = "user")
 @Entity
@@ -13,7 +15,7 @@ public class User {
     @Column(name = "username",unique = true)
     private String username;
 
-    @Column(name = "pasword")
+    @Column(name = "password")
     private String password;
 
     @Column(name = "email")
@@ -23,15 +25,15 @@ public class User {
     @JoinColumn(name = "user_profile_id", referencedColumnName = "id")
     private UserProfile userProfile;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Cart> cart;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Cart> cart = new HashSet<>();
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Order> orders;
 
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comments;
-
+    private Set<Comment> comments = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -82,20 +84,20 @@ public class User {
     }
 
 
-    public List<Comment> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
-    }
-
-    public List<Cart> getCart() {
+    public Set<Cart> getCart() {
         return cart;
     }
 
-    public void setCart(List<Cart> cart) {
+    public void setCart(Set<Cart> cart) {
         this.cart = cart;
+    }
+
+    public Set<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(Set<Comment> comments) {
+        this.comments = comments;
     }
 }
 

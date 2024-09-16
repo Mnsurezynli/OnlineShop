@@ -1,7 +1,9 @@
 package application.model;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Table(name = "product")
 @Entity
@@ -23,19 +25,21 @@ public class Product {
     @Column(name = "inventory")
     private int inventory;
 
+
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
 
 
-    @OneToMany(mappedBy = "product" ,cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<OrderItem>orderItems;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<OrderItem> orderItems = new HashSet<>();
+
 
     @OneToMany(mappedBy = "product" ,cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<Comment> comments;
+    private Set<Comment> comments=new HashSet<>();
 
     @OneToMany(mappedBy = "product" ,cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<CartItem> cartItems;
+    private Set<CartItem> cartItems=new HashSet<>();
 
 
     public Long getId() {
@@ -85,28 +89,27 @@ public class Product {
         this.category = category;
     }
 
-    public List<OrderItem> getOrderItems() {
+    public Set<OrderItem> getOrderItems() {
         return orderItems;
     }
 
-    public void setOrderItems(List<OrderItem> orderItems) {
+    public void setOrderItems(Set<OrderItem> orderItems) {
         this.orderItems = orderItems;
     }
 
-    public List<Comment> getComments() {
+    public Set<Comment> getComments() {
         return comments;
     }
 
-    public void setComments(List<Comment> comments) {
+    public void setComments(Set<Comment> comments) {
         this.comments = comments;
     }
 
-    public List<CartItem> getCartItems() {
+    public Set<CartItem> getCartItems() {
         return cartItems;
     }
 
-    public void setCartItems(List<CartItem> cartItems) {
+    public void setCartItems(Set<CartItem> cartItems) {
         this.cartItems = cartItems;
     }
-
 }

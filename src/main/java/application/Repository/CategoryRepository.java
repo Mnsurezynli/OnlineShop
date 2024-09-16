@@ -13,11 +13,7 @@ import java.util.Optional;
 
 @Repository
 @EnableJpaRepositories
-public interface CategoryRepository extends JpaRepository<Category,Long> {
-
-    Category saveAndFlush(Category category);
-
-   // Category update(Long id, Category category);
+public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     void deleteById(Long id);
 
@@ -25,6 +21,4 @@ public interface CategoryRepository extends JpaRepository<Category,Long> {
 
     List<Category> findAll();
 
-    @Query("SELECT p FROM Product p WHERE p.category.id = :categoryId")
-    List<Product> findProductsByCategoryId(@Param("categoryId") Long categoryId);
 }

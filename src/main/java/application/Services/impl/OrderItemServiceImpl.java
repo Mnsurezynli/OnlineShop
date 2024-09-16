@@ -9,25 +9,26 @@ import application.exception.ResourceNotFoundException;
 import application.model.Order;
 import application.model.OrderItem;
 import application.model.Product;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class OrderItemServiceImpl implements IOrderItemService {
 
-    private OrderRepository orderRepository;
-
-    private ProductRepository productRepository;
-
-    private OrderItemRepository orderItemRepository;
-
-    public OrderItemServiceImpl(OrderRepository orderRepository) {
+    private final OrderRepository orderRepository;
+    private final ProductRepository productRepository;
+    private final OrderItemRepository orderItemRepository;
+    @Autowired
+    public OrderItemServiceImpl(OrderRepository orderRepository, ProductRepository productRepository, OrderItemRepository orderItemRepository) {
         this.orderRepository = orderRepository;
+        this.productRepository = productRepository;
+        this.orderItemRepository = orderItemRepository;
     }
+
     @Transactional
     @Override
     public OrderItemDto add(OrderItemDto orderItemDto) {
@@ -41,28 +42,25 @@ public class OrderItemServiceImpl implements IOrderItemService {
         orderItem.setOrder(order);
         orderItem.setProduct(product);
 
-        OrderItem OrderItem = orderItemRepository.save(orderItem);
-        return convertToDto(OrderItem);
+        OrderItem savedOrderItem = orderItemRepository.save(orderItem);
+        return convertToDto(savedOrderItem);
     }
 
     @Transactional
     @Override
     public void deleteById(Long orderItemId) {
-        Optional<OrderItem> orderItem = orderItemRepository.findById(orderItemId);
-        if (orderItem.isPresent()) {
-            orderItemRepository.deleteById(orderItemId);
-            System.out.println("OrderItem deleted successfully");
-        } else {
+        if (!orderItemRepository.existsById(orderItemId)) {
             throw new ResourceNotFoundException("OrderItem with ID " + orderItemId + " not found.");
         }
+        orderItemRepository.deleteById(orderItemId);
+        System.out.println("OrderItem deleted successfully");
     }
 
-
     @Override
-    public Optional<OrderItemDto> getOrderItemById(Long id) {
-        return Optional.ofNullable(orderItemRepository.findOrderItemById(id)
-                .map(this::convertToDto)
-                .orElseThrow(() -> new ResourceNotFoundException("OrderItem with ID " + id + " not found.")));
+    public OrderItemDto getOrderItemById(Long id) {
+        OrderItem orderItem = orderItemRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("OrderItem with ID " + id + " not found."));
+        return convertToDto(orderItem);
     }
 
     @Override
@@ -74,25 +72,24 @@ public class OrderItemServiceImpl implements IOrderItemService {
 
     @Override
     public List<OrderItemDto> getOrderItemsByOrderId(Long orderId) {
-        List<OrderItem> orderItems = orderItemRepository.findOrderItemsByOrderId(orderId);
+        List<OrderItem> orderItems = orderItemRepository.findByOrderId(orderId);
         if (orderItems.isEmpty()) {
-               throw new ResourceNotFoundException("Not found orderItem ");
+            throw new ResourceNotFoundException("No OrderItems found for order with ID " + orderId);
         }
-
         return orderItems.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
-
     public OrderItemDto convertToDto(OrderItem orderItem) {
-
         if (orderItem == null) {
             return null;
         }
         OrderItemDto orderItemDto = new OrderItemDto();
         orderItemDto.setId(orderItem.getId());
         orderItemDto.setNumber(orderItem.getNumber());
+        orderItemDto.setOrderId(orderItem.getOrder().getId());
+        orderItemDto.setProductId(orderItem.getProduct().getId());
         return orderItemDto;
     }
 
@@ -105,5 +102,4 @@ public class OrderItemServiceImpl implements IOrderItemService {
         orderItem.setNumber(orderItemDto.getNumber());
         return orderItem;
     }
-
 }

@@ -4,9 +4,9 @@ import application.Dto.CategoryDto;
 import application.Dto.ProductDto;
 import application.Repository.CategoryRepository;
 import application.Services.ICategoryService;
+import application.Services.IProductService;
 import application.exception.ResourceNotFoundException;
 import application.model.Category;
-import application.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,13 +17,13 @@ import java.util.stream.Collectors;
 @Service
 public class CategoryServiceImpl implements ICategoryService {
 
-    private CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
+    private final IProductService productService;
 
     @Autowired
-    private ProductServiceImpl productService;
-
-    public CategoryServiceImpl(CategoryRepository categoryRepository) {
+    public CategoryServiceImpl(CategoryRepository categoryRepository, IProductService productService) {
         this.categoryRepository = categoryRepository;
+        this.productService = productService;
     }
 
     @Transactional
@@ -34,28 +34,20 @@ public class CategoryServiceImpl implements ICategoryService {
         return convertToDto(category);
     }
 
-    @Transactional
-    @Override
-    public CategoryDto update(Long id, CategoryDto categoryDto) {
-        Category category = categoryRepository.findById(id)
-         .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
-        category.setName(categoryDto.getName());
-        category = categoryRepository.save(category);
-        return convertToDto(category);
-    }
+
 
     @Transactional
     @Override
     public void deleteById(Long id) {
         Category category = categoryRepository.findById(id)
-           .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id " + id));
         categoryRepository.delete(category);
     }
 
     @Override
     public CategoryDto getById(Long id) {
         Category category = categoryRepository.findById(id)
-          .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id " + id));
         return convertToDto(category);
     }
 
@@ -67,19 +59,7 @@ public class CategoryServiceImpl implements ICategoryService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public List<ProductDto> getProductsByCategoryId(Long id) {
-        Category category = categoryRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
-        return category.getProducts().stream()
-                .map(productService::convertToDto)
-                .collect(Collectors.toList());
-
-    }
-
-
     public CategoryDto convertToDto(Category category) {
-
         if (category == null) {
             return null;
         }
@@ -98,5 +78,4 @@ public class CategoryServiceImpl implements ICategoryService {
         category.setName(categoryDto.getName());
         return category;
     }
-
 }

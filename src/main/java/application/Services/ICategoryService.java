@@ -9,7 +9,6 @@ public interface ICategoryService {
 
     CategoryDto create(CategoryDto categoryDto);
 
-    CategoryDto update(Long id, CategoryDto categoryDto);
 
     void deleteById(Long id);
 
@@ -17,6 +16,4 @@ public interface ICategoryService {
 
     List<CategoryDto> getAll();
 
-    List<ProductDto> getProductsByCategoryId(Long id);
 }
-

@@ -2,6 +2,7 @@ package application.controller;
 
 import application.Dto.CartItemDto;
 import application.Services.ICartItemService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,39 +10,40 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/cartItem")
+@RequestMapping("/api/cart-items")
 public class CartItemController {
 
-    private ICartItemService iCartItemService;
+    private final ICartItemService cartItemService;
 
-    public CartItemController(ICartItemService iCartItemService) {
-        this.iCartItemService = iCartItemService;
+    @Autowired
+    public CartItemController(ICartItemService cartItemService) {
+        this.cartItemService = cartItemService;
     }
 
-     @PostMapping("/{cartId}/products/{productId}")
-    public ResponseEntity<CartItemDto> addCartItem(@PathVariable Long cartId,@PathVariable Long productId,@RequestParam int quantiy){
-        CartItemDto cartItemDto = iCartItemService.addCartItem(cartId, productId,quantiy);
-        return new ResponseEntity<>(cartItemDto, HttpStatus.OK);
+    @PostMapping
+    public ResponseEntity<CartItemDto> addCartItem(@RequestParam Long cartId, @RequestParam Long productId, @RequestParam int quantity) {
+        CartItemDto cartItemDto = cartItemService.addCartItem(cartId, productId, quantity);
+        return new ResponseEntity<>(cartItemDto, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{cartId}/products/{productId}")
-    public ResponseEntity<CartItemDto> updateCartItem( @PathVariable Long cartId, @PathVariable Long productId, @RequestParam int newQuantity) {
-        CartItemDto cartItemDto = iCartItemService.updateCartItem(cartId, productId, newQuantity);
+    @PutMapping
+    public ResponseEntity<CartItemDto> updateCartItem(@RequestParam Long cartId, @RequestParam Long productId, @RequestParam int newQuantity) {
+        CartItemDto cartItemDto = cartItemService.updateCartItem(cartId, productId, newQuantity);
         if (cartItemDto == null) {
             return ResponseEntity.noContent().build();
         }
-        return new ResponseEntity<>(cartItemDto,HttpStatus.OK);
+        return ResponseEntity.ok(cartItemDto);
     }
 
-    @DeleteMapping("/{cartId}/products/{productId}")
-    public ResponseEntity<String> removeCartItem(@PathVariable Long cartId, @PathVariable Long productId) {
-        iCartItemService.removeCartItem(cartId, productId);
-        return new ResponseEntity<>("cartItem deleted successfully",HttpStatus.OK);
+    @DeleteMapping
+    public ResponseEntity<Void> removeCartItem(@RequestParam Long cartId, @RequestParam Long productId) {
+        cartItemService.removeCartItem(cartId, productId);
+        return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{cartId}")
-    public ResponseEntity<List<CartItemDto>> getCartItems(@PathVariable Long cartId) {
-        List<CartItemDto> cartItems = iCartItemService.getCartItems(cartId);
-        return new ResponseEntity<>(cartItems,HttpStatus.OK);
+    @GetMapping
+    public ResponseEntity<List<CartItemDto>> getCartItems(@RequestParam Long cartId) {
+        List<CartItemDto> cartItems = cartItemService.getCartItems(cartId);
+        return ResponseEntity.ok(cartItems);
     }
 }

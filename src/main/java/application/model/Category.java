@@ -1,7 +1,9 @@
 package application.model;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Table(name = "category")
 @Entity
@@ -14,8 +16,9 @@ public class Category {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "category" ,cascade = CascadeType.ALL ,fetch = FetchType.LAZY)
-    private List <Product> products;
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Product> products = new HashSet<>();
+
     public Long getId() {
         return id;
     }
@@ -32,11 +35,12 @@ public class Category {
         this.name = name;
     }
 
-    public List<Product> getProducts() {
+
+    public Set<Product> getProducts() {
         return products;
     }
 
-    public void setProducts(List<Product> products) {
+    public void setProducts(Set<Product> products) {
         this.products = products;
     }
 }

@@ -9,60 +9,60 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/product")
+@RequestMapping("/api/products")
 public class ProductController {
 
-   private IProductService iProductService;
+    private final IProductService productService;
 
-    public ProductController(IProductService iProductService) {
-        this.iProductService = iProductService;
-    }
-    @PostMapping("/add")
-    public ResponseEntity<ProductDto> add(@RequestBody ProductDto productDto){
-        ProductDto productDto1=iProductService.add(productDto);
-        return new ResponseEntity<>(productDto1, HttpStatus.CREATED);
+    public ProductController(IProductService productService) {
+        this.productService = productService;
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<ProductDto> update(@PathVariable Long id , ProductDto productDto){
-        ProductDto productDto1=iProductService.update(id,productDto);
-        return new ResponseEntity<>(productDto1,HttpStatus.OK);
+    @PostMapping("/create")
+    public ResponseEntity<ProductDto> create(@RequestBody ProductDto productDto) {
+        ProductDto createdProduct = productService.create(productDto);
+        return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductDto> update(@PathVariable Long id, @RequestBody ProductDto productDto) {
+        ProductDto updatedProduct = productService.update(id, productDto);
+        return ResponseEntity.ok(updatedProduct);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteById(@PathVariable Long id){
-        iProductService.deleteById(id);
-        return new ResponseEntity<>("product deleted sucessfully",HttpStatus.OK);
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+        productService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductDto> getById(@PathVariable Long id){
-        ProductDto productDto=iProductService.getById(id);
-        return new ResponseEntity<>(productDto,HttpStatus.OK);
+    public ResponseEntity<ProductDto> getProductById(@PathVariable Long id) {
+        ProductDto productDto = productService.getById(id);
+        return ResponseEntity.ok(productDto);
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductDto>> getAll(){
-        List<ProductDto> productDtos=iProductService.getAll();
-        return new ResponseEntity<>(productDtos,HttpStatus.OK);
-}
-
-    @GetMapping("/category/{categoryId}")
-    public ResponseEntity <List<ProductDto>> getCategoryById(@PathVariable Long categoryId){
-        List<ProductDto>productDtos=iProductService.getByCategoryId(categoryId);
-        return new ResponseEntity<>(productDtos,HttpStatus.OK);
+    public ResponseEntity<List<ProductDto>> getAllProducts() {
+        List<ProductDto> products = productService.getAll();
+        return ResponseEntity.ok(products);
     }
 
-    @PatchMapping("/{productId}/inventory")
-    public ResponseEntity<ProductDto> updateInventory(@PathVariable Long productId, @RequestParam int quantityChange) {
-        ProductDto updatedProduct = iProductService.updateInventory(productId, quantityChange);
-        return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<List<ProductDto>> getProductsByCategoryId(@PathVariable Long categoryId) {
+        List<ProductDto> products = productService.getByCategoryId(categoryId);
+        return ResponseEntity.ok(products);
+    }
+
+    @PutMapping("/{productId}/inventory")
+    public ResponseEntity<ProductDto> updateProductInventory(@PathVariable Long productId, @RequestParam int quantityChange) {
+        ProductDto updatedProduct = productService.updateInventory(productId, quantityChange);
+        return ResponseEntity.ok(updatedProduct);
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<ProductDto>> searchWithName(@RequestParam String name) {
-        List<ProductDto> products = iProductService.searchWithName(name);
-        return new ResponseEntity<>(products, HttpStatus.OK);
+    public ResponseEntity<List<ProductDto>> searchProductsByName(@RequestParam String name) {
+        List<ProductDto> products = productService.searchWithName(name);
+        return ResponseEntity.ok(products);
     }
 }
-

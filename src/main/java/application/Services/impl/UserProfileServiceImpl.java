@@ -5,6 +5,7 @@ import application.Repository.UserProfileRepository;
 import application.Services.IUserProfileService;
 import application.exception.ResourceNotFoundException;
 import application.model.UserProfile;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -15,9 +16,9 @@ import java.util.stream.Collectors;
 @Service
 public class UserProfileServiceImpl implements IUserProfileService {
 
+    private final UserProfileRepository userProfileRepository;
 
-    private UserProfileRepository userProfileRepository;
-
+    @Autowired
     public UserProfileServiceImpl(UserProfileRepository userProfileRepository) {
         this.userProfileRepository = userProfileRepository;
     }
@@ -25,29 +26,35 @@ public class UserProfileServiceImpl implements IUserProfileService {
     @Transactional
     @Override
     public UserProfileDto update(Long id, UserProfileDto userProfileDto) {
-        Optional<UserProfile> userProfile = Optional.ofNullable(userProfileRepository.findById(userProfileDto.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("UserProfile not found")));
-        UserProfile userProfile1 = convertToEntity(userProfileDto);
-        userProfileRepository.saveAndFlush(userProfile1);
+        UserProfile existingUserProfile = userProfileRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("UserProfile not found with id " + id));
+        existingUserProfile.setFirstName(userProfileDto.getFirstName());
+        existingUserProfile.setLastName(userProfileDto.getLastName());
+        existingUserProfile.setAddress(userProfileDto.getAddress());
+        existingUserProfile.setPhoneNumber(userProfileDto.getPhoneNumber());
+        userProfileRepository.saveAndFlush(existingUserProfile);
+
         System.out.println("Profile information updated successfully");
-        return userProfileDto;
+        return convertToDto(existingUserProfile);
     }
 
     @Override
     public UserProfileDto getById(Long id) {
-        Optional<UserProfile> userProfile = Optional.ofNullable(userProfileRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("UserProfile not found")));
-            return convertToDto(userProfile.get());
+        UserProfile userProfile = userProfileRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("UserProfile not found with id " + id));
+
+        return convertToDto(userProfile);
     }
 
     @Override
     public List<UserProfileDto> getAll() {
         List<UserProfile> userProfiles = userProfileRepository.findAll();
-        return
-                userProfiles.stream().map(this::convertToDto).collect(Collectors.toList());
+        return userProfiles.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
-    public UserProfileDto convertToDto(UserProfile userProfile) {
+    private UserProfileDto convertToDto(UserProfile userProfile) {
         if (userProfile == null) {
             return null;
         }
@@ -60,16 +67,16 @@ public class UserProfileServiceImpl implements IUserProfileService {
         return userProfileDto;
     }
 
-    public UserProfile convertToEntity(UserProfileDto userProfileDto) {
+    private UserProfile convertToEntity(UserProfileDto userProfileDto) {
         if (userProfileDto == null) {
             return null;
         }
         UserProfile userProfile = new UserProfile();
-        userProfile.setId(userProfile.getId());
-        userProfile.setFirstName(userProfile.getFirstName());
-        userProfile.setLastName(userProfile.getLastName());
-        userProfile.setAddress(userProfile.getAddress());
-        userProfile.setPhoneNumber(userProfile.getPhoneNumber());
+        userProfile.setId(userProfileDto.getId());
+        userProfile.setFirstName(userProfileDto.getFirstName());
+        userProfile.setLastName(userProfileDto.getLastName());
+        userProfile.setAddress(userProfileDto.getAddress());
+        userProfile.setPhoneNumber(userProfileDto.getPhoneNumber());
         return userProfile;
     }
 }
