@@ -15,7 +15,7 @@ import java.util.Optional;
 @EnableJpaRepositories
 public interface UserProfileRepository extends JpaRepository<UserProfile,Long> {
 
-    //Optional<UserProfile> update(Long id , UserProfileDto userProfileDto);
+    Optional<UserProfile> update(Long id , UserProfileDto userProfileDto);
 
     Optional<UserProfile> findById(Long id);
 

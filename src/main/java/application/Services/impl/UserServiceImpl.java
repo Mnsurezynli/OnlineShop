@@ -8,6 +8,7 @@ import application.Services.IUserService;
 import application.exception.*;
 import application.model.User;
 import application.model.UserProfile;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -15,29 +16,33 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 @Service
 public class UserServiceImpl implements IUserService {
 
+    private  UserRepository userRepository;
+    private  UserProfileRepository userProfileRepository;
 
-    private UserRepository userRepository;
-    private UserProfileRepository userProfileRepository;
-
-    public UserServiceImpl(UserRepository userRepository) {
+    @Autowired
+    public UserServiceImpl(UserRepository userRepository, UserProfileRepository userProfileRepository) {
         this.userRepository = userRepository;
+        this.userProfileRepository = userProfileRepository;
     }
 
     @Validated
     @Transactional
     @Override
     public void register(UserDto userDto) {
-        Optional<User> user = userRepository.findByUsername(userDto.getUsername());
-                if(user.isPresent()){
-               throw  new ResourceAlreadyExistsException("User Already exists");
-                }
-            User user1= convertToEntity(userDto);
-        userRepository.saveAndFlush(user1);
-            System.out.println("Registration was successful ");
+        Optional<User> existingUser = userRepository.findByUsername(userDto.getUsername());
+        if (existingUser.isPresent()) {
+            throw new ResourceAlreadyExistsException("User Already exists");
+        }
+        User user = convertToEntity(userDto);
+        if (user.getUserProfile() != null) {
+            userProfileRepository.save(user.getUserProfile());
+        }
+
+        userRepository.saveAndFlush(user);
+        System.out.println("Registration was successful ");
     }
 
     @Validated
@@ -51,18 +56,38 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
-
     @Validated
     @Transactional
     @Override
     public UserDto update(Long id, UserDto userDto) {
-        Optional<User> user = Optional.ofNullable(userRepository.findById(userDto.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + id)));
-        User user1 = convertToEntity(userDto);
-        userRepository.saveAndFlush(user1);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + id));
+
+        if (userDto.getUserProfileDto() != null) {
+            UserProfile userProfile = user.getUserProfile();
+            if (userProfile == null) {
+                userProfile = new UserProfile();
+                user.setUserProfile(userProfile);
+            }
+
+            userProfile.setFirstName(userDto.getUserProfileDto().getFirstName());
+            userProfile.setLastName(userDto.getUserProfileDto().getLastName());
+            userProfile.setAddress(userDto.getUserProfileDto().getAddress());
+            userProfile.setPhoneNumber(userDto.getUserProfileDto().getPhoneNumber());
+
+            userProfileRepository.save(userProfile);
+        }
+
+        // Update User details
+        user.setUsername(userDto.getUsername());
+        user.setPassword(userDto.getPassword());
+        user.setEmail(userDto.getEmail());
+
+        userRepository.saveAndFlush(user);
         System.out.println("Profile information updated successfully");
-        return userDto;
+        return convertToDto(user);
     }
+
 
     @Transactional
     @Override
@@ -70,15 +95,17 @@ public class UserServiceImpl implements IUserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + id));
 
+        if (user.getUserProfile() != null) {
+            userProfileRepository.delete(user.getUserProfile());
+        }
         userRepository.deleteById(id);
         System.out.println("User deleted successfully");
     }
 
-
     @Override
     public UserDto getById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id" + id));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + id));
 
         return convertToDto(user);
     }
@@ -86,17 +113,10 @@ public class UserServiceImpl implements IUserService {
     @Override
     public List<UserDto> getAll() {
         List<User> users = userRepository.findAll();
-        return
-                users.stream().map(this::convertToDto).collect(Collectors.toList());
-
-
+        return users.stream().map(this::convertToDto).collect(Collectors.toList());
     }
 
-
-    public UserDto convertToDto(User user) {
-        if (user == null) {
-            return null;
-        }
+    private UserDto convertToDto(User user) {
         UserDto userDto = new UserDto();
         userDto.setId(user.getId());
         userDto.setUsername(user.getUsername());
@@ -110,34 +130,30 @@ public class UserServiceImpl implements IUserService {
             userProfileDto.setLastName(user.getUserProfile().getLastName());
             userProfileDto.setAddress(user.getUserProfile().getAddress());
             userProfileDto.setPhoneNumber(user.getUserProfile().getPhoneNumber());
-            userDto.setUserProfile(userProfileDto);
-
-
+            userDto.setUserProfileDto(userProfileDto);
         }
+
         return userDto;
     }
 
-    public User convertToEntity(UserDto userDto) {
-        if (userDto == null) {
-            return null;
-        }
-        User user1 = new User();
-        user1.setId(userDto.getId());
-        user1.setUsername(userDto.getUsername());
-        user1.setPassword(userDto.getPassword());
-        user1.setEmail(userDto.getEmail());
+    private User convertToEntity(UserDto userDto) {
+        User user = new User();
+        user.setId(userDto.getId());
+        user.setUsername(userDto.getUsername());
+        user.setPassword(userDto.getPassword());
+        user.setEmail(userDto.getEmail());
 
-        if (userDto.getUserProfile() != null) {
+        if (userDto.getUserProfileDto() != null) {
             UserProfile userProfile = new UserProfile();
-            userProfile.setId(userDto.getUserProfile().getId());
-            userProfile.setFirstName(userDto.getUserProfile().getFirstName());
-            userProfile.setLastName(userDto.getUserProfile().getLastName());
-            userProfile.setAddress(userDto.getUserProfile().getAddress());
-            userProfile.setPhoneNumber(userDto.getUserProfile().getPhoneNumber());
-            user1.setUserProfile(userProfile);
-            System.out.println("UserProfile set to User: " + userProfile);
+            userProfile.setId(userDto.getUserProfileDto().getId());
+            userProfile.setFirstName(userDto.getUserProfileDto().getFirstName());
+            userProfile.setLastName(userDto.getUserProfileDto().getLastName());
+            userProfile.setAddress(userDto.getUserProfileDto().getAddress());
+            userProfile.setPhoneNumber(userDto.getUserProfileDto().getPhoneNumber());
+            user.setUserProfile(userProfile);
         }
-            return user1;
-        }
+
+        return user;
+    }
 
 }

@@ -5,25 +5,14 @@ import application.model.User;
 public class UserProfileDto {
 
     private Long id;
-
     private String firstName;
 
-    private  String lastName;
+    private String lastName;
 
     private String address;
 
     private String phoneNumber;
 
-    private User user;
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getFirstName() {
         return firstName;
@@ -57,11 +46,10 @@ public class UserProfileDto {
         this.phoneNumber = phoneNumber;
     }
 
-    public User getUser() {
-        return user;
+    public void setId(Long id) {
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public Long getId() {
+        return id;
     }
 }

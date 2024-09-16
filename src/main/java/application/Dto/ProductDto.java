@@ -16,7 +16,7 @@ public class ProductDto {
 
     private int inventory;
 
-    private Category category;
+    private Long categoryId;
 
     public Long getId() {
         return id;
@@ -57,11 +57,12 @@ public class ProductDto {
     public void setInventory(int inventory) {
         this.inventory=inventory;
     }
-    public Category getCategory() {
-        return category;
+
+    public Long getCategoryId() {
+        return categoryId;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
     }
 }

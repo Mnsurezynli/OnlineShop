@@ -9,15 +9,16 @@ import java.util.List;
 
 public class UserDto {
 
-     private Long id ;
+    private Long id;
 
-     private String username;
+    private String username;
 
-     private String password;
+    private String password;
 
-     private String email;
+    private String email;
 
-     private UserProfile userProfile;
+    private UserProfileDto userProfileDto;
+
 
 //     private Cart cart;
 //
@@ -49,13 +50,6 @@ public class UserDto {
         this.email = email;
     }
 
-    public UserProfile getUserProfile() {
-        return userProfile;
-    }
-
-//    public void setUserProfile(UserProfile userProfile) {
-//        this.userProfile = userProfile;
-//    }
 
 //    public Cart getCart() {
 //        return cart;
@@ -89,6 +83,12 @@ public class UserDto {
         this.password = password;
     }
 
-    public void setUserProfile(UserProfileDto userProfileDto) {
+    public UserProfileDto getUserProfileDto() {
+        return userProfileDto;
+    }
+
+    public void setUserProfileDto(UserProfileDto userProfileDto) {
+        this.userProfileDto = userProfileDto;
     }
 }
+
