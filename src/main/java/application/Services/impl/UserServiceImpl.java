@@ -40,11 +40,12 @@ public class UserServiceImpl implements IUserService {
         }
         User user = convertToEntity(userDto);
         if (user.getUserProfile() != null) {
-            userProfileRepository.save(user.getUserProfile());
+            user.getUserProfile().setUser(user);
         }
         userRepository.saveAndFlush(user);
         System.out.println("Registration was successful");
     }
+
 
     @Validated
     @Override
@@ -93,6 +94,7 @@ public class UserServiceImpl implements IUserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + id));
 
         if (user.getUserProfile() != null) {
+            user.getUserProfile().setUser(null);
             userProfileRepository.delete(user.getUserProfile());
         }
         userRepository.deleteById(id);
@@ -146,6 +148,7 @@ public class UserServiceImpl implements IUserService {
             userProfile.setLastName(userDto.getUserProfileDto().getLastName());
             userProfile.setAddress(userDto.getUserProfileDto().getAddress());
             userProfile.setPhoneNumber(userDto.getUserProfileDto().getPhoneNumber());
+            userProfile.setUser(user);
             user.setUserProfile(userProfile);
         }
 

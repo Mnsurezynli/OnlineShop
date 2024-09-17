@@ -6,7 +6,6 @@ public class UserProfileDto {
     private String address;
     private String phoneNumber;
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }

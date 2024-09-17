@@ -2,14 +2,15 @@ package application.Dto;
 
 import application.model.Order;
 import application.model.Product;
+import application.model.User;
 
 public class OrderItemDto {
     private Long id;
     private int number;
     private Long productId;
     private Long orderId;
-
-    // Getters and Setters
+   private  User product;
+ 
     public Long getId() {
         return id;
     }
@@ -40,5 +41,13 @@ public class OrderItemDto {
 
     public void setOrderId(Long orderId) {
         this.orderId = orderId;
+    }
+
+    public User getProduct() {
+        return product;
+    }
+
+    public void setProduct(User product) {
+        this.product = product;
     }
 }

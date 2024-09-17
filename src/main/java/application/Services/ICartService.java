@@ -4,6 +4,8 @@ import application.Dto.CartDto;
 
 public interface ICartService {
 
+    CartDto createCart(Long userId);
+
     void addProductToCart(Long cartId, Long productId, int quantity);
 
     CartDto viewCart(Long cartId);

@@ -15,6 +15,10 @@ public class OrderDto {
 
     private UserDto user;
     private List<CartItemDto> cartItems;
+
+    public OrderDto(){
+
+    }
     public Long getId() {
         return id;
     }

@@ -48,6 +48,7 @@ public class CommentServiceImpl implements ICommentService {
         return convertToDto(savedComment);
     }
 
+
     @Transactional
     @Override
     public void deleteById(Long id) {
@@ -103,8 +104,13 @@ public class CommentServiceImpl implements ICommentService {
         commentDto.setId(comment.getId());
         commentDto.setText(comment.getText());
         commentDto.setDate(comment.getDate());
-        commentDto.setProductId(comment.getProduct().getId());
-        commentDto.setUserId(comment.getUser().getId());
+        if (comment.getProduct() != null) {
+            commentDto.setProductId(comment.getProduct().getId());
+        }
+        if (comment.getUser() != null) {
+            commentDto.setUserId(comment.getUser().getId());
+        }
+
         return commentDto;
     }
 
@@ -118,4 +124,5 @@ public class CommentServiceImpl implements ICommentService {
         comment.setDate(commentDto.getDate());
         return comment;
     }
+
 }

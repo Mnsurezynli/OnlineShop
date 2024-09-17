@@ -3,12 +3,14 @@ package application.controller;
 import application.Dto.UserProfileDto;
 import application.Services.IUserProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/userprofiles")
+@RequestMapping("/api/userprofiles")
 public class UserProfileController {
 
     private final IUserProfileService userProfileService;
@@ -24,12 +26,14 @@ public class UserProfileController {
     }
 
     @GetMapping("/{id}")
-    public UserProfileDto getById(@PathVariable Long id) {
-        return userProfileService.getById(id);
+    public ResponseEntity<UserProfileDto> getById(@PathVariable Long id) {
+        UserProfileDto userProfileDto = userProfileService.getById(id);
+        return ResponseEntity.ok(userProfileDto);
     }
 
     @GetMapping
-    public List<UserProfileDto> getAll() {
-        return userProfileService.getAll();
+    public ResponseEntity<List<UserProfileDto>> getAll() {
+        List<UserProfileDto> userProfiles = userProfileService.getAll();
+        return ResponseEntity.ok(userProfiles);
     }
 }

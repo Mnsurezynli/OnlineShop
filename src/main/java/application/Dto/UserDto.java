@@ -10,6 +10,10 @@ public class UserDto {
 
     private UserProfileDto userProfileDto;
 
+    public UserDto(){
+
+    }
+
     public Long getId() {
         return id;
     }

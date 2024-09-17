@@ -1,6 +1,8 @@
 package application.Dto;
+
 import application.model.Cart;
 import application.model.Category;
+
 public class ProductDto {
     private Long id;
     private String name;
@@ -9,7 +11,10 @@ public class ProductDto {
     private int inventory;
     private Long categoryId;
 
-    // Getters and Setters
+    public ProductDto() {
+
+    }
+
     public Long getId() {
         return id;
     }

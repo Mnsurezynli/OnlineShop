@@ -1,6 +1,5 @@
 package application.Dto;
-import application.model.Cart;
-import application.model.Product;
+
 public class CartItemDto {
     private Long id;
     private int number;
@@ -10,12 +9,15 @@ public class CartItemDto {
     private ProductDto product;
     private int quantity;
 
+    public CartItemDto(){
+    }
+
     public CartItemDto(Long id, int number) {
         this.id = id;
         this.number = number;
     }
 
-    public CartItemDto() {
+    public CartItemDto(Long id, int number, String name, double price) {
 
     }
 

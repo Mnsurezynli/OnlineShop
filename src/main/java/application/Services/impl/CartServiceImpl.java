@@ -5,11 +5,13 @@ import application.Dto.CartItemDto;
 import application.Repository.CartItemRepository;
 import application.Repository.CartRepository;
 import application.Repository.ProductRepository;
+import application.Repository.UserRepository;
 import application.Services.ICartService;
 import application.exception.ResourceNotFoundException;
 import application.model.Cart;
 import application.model.CartItem;
 import application.model.Product;
+import application.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,11 +25,25 @@ public class CartServiceImpl implements ICartService {
     private final ProductRepository productRepository;
     private final CartItemRepository cartItemRepository;
 
+    private final UserRepository userRepository;
+
     @Autowired
-    public CartServiceImpl(CartRepository cartRepository, ProductRepository productRepository, CartItemRepository cartItemRepository) {
+    public CartServiceImpl(CartRepository cartRepository, ProductRepository productRepository, CartItemRepository cartItemRepository, UserRepository userRepository) {
         this.cartRepository = cartRepository;
         this.productRepository = productRepository;
         this.cartItemRepository = cartItemRepository;
+        this.userRepository = userRepository;
+    }
+
+    @Transactional
+    @Override
+    public CartDto createCart(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + userId));
+        Cart cart = new Cart();
+        cart.setUser(user);
+        Cart savedCart = cartRepository.save(cart);
+        return convertToDto(savedCart);
     }
 
     @Transactional
@@ -54,8 +70,10 @@ public class CartServiceImpl implements ICartService {
     public CartDto viewCart(Long cartId) {
         Cart cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cart not found with id " + cartId));
+        System.out.println("Cart found: " + cart);
         return convertToDto(cart);
     }
+
 
     @Transactional
     @Override
@@ -102,7 +120,10 @@ public class CartServiceImpl implements ICartService {
         cartDto.setId(cart.getId());
         cartDto.setUser(cart.getUser());
         cartDto.setCartItems(cart.getCartItems().stream()
-                .map(cartItem -> new CartItemDto(cartItem.getId(), cartItem.getNumber()))
+                .map(cartItem -> new CartItemDto(cartItem.getId(),
+                        cartItem.getNumber(),
+                        cartItem.getProduct().getName(),
+                        cartItem.getProduct().getPrice()))
                 .collect(Collectors.toList()));
         return cartDto;
     }

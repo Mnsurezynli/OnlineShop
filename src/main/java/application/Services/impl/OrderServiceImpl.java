@@ -1,19 +1,19 @@
 package application.Services.impl;
 import application.Dto.CartItemDto;
 import application.Dto.OrderDto;
+import application.Dto.OrderItemDto;
 import application.Repository.CartRepository;
 import application.Repository.OrderRepository;
 import application.Repository.ProductRepository;
 import application.Services.IOrderService;
 import application.exception.ResourceNotFoundException;
-import application.model.Cart;
-import application.model.Order;
-import application.model.Product;
+import application.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -108,6 +108,14 @@ public class OrderServiceImpl implements IOrderService {
         order.setTotalPrice(orderDto.getTotalPrice());
         order.setStatus(orderDto.getStatus());
         order.setDate(orderDto.getDate());
+
+        if (orderDto.getUser() != null) {
+            User user = new User();
+            user.setId(orderDto.getUser().getId());
+            order.setUser(user);
+        }
         return order;
     }
+
+
 }

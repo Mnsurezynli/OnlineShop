@@ -93,13 +93,21 @@ public class OrderItemServiceImpl implements IOrderItemService {
         return orderItemDto;
     }
 
-    public OrderItem convertToEntity(OrderItemDto orderItemDto) {
+    private OrderItem convertOrderItemDtoToEntity(OrderItemDto orderItemDto) {
         if (orderItemDto == null) {
             return null;
         }
         OrderItem orderItem = new OrderItem();
         orderItem.setId(orderItemDto.getId());
         orderItem.setNumber(orderItemDto.getNumber());
+
+
+        if (orderItemDto.getProduct() != null) {
+            Product product = new Product();
+            product.setId(orderItemDto.getProduct().getId());
+            orderItem.setProduct(product);
+        }
+
         return orderItem;
     }
 }

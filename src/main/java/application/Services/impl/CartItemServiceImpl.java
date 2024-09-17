@@ -1,6 +1,5 @@
 package application.Services.impl;
 
-import application.Dto.CartDto;
 import application.Dto.CartItemDto;
 import application.Repository.CartItemRepository;
 import application.Repository.CartRepository;
@@ -107,7 +106,7 @@ public class CartItemServiceImpl implements ICartItemService {
         if (cartItem == null) {
             return null;
         }
-        CartItemDto cartItemDto = new CartItemDto();
+        CartItemDto cartItemDto = new CartItemDto(cartItem.getId(), cartItem.getNumber(), cartItem.getProduct().getName(), cartItem.getProduct().getPrice());
         cartItemDto.setId(cartItem.getId());
         cartItemDto.setNumber(cartItem.getNumber());
         return cartItemDto;
