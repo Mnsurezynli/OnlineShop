@@ -9,7 +9,7 @@ public class OrderItemDto {
     private int number;
     private Long productId;
     private Long orderId;
-   private  User product;
+   private  Product  product;
  
     public Long getId() {
         return id;
@@ -43,11 +43,11 @@ public class OrderItemDto {
         this.orderId = orderId;
     }
 
-    public User getProduct() {
+    public Product getProduct() {
         return product;
     }
 
-    public void setProduct(User product) {
+    public void setProduct(Product product) {
         this.product = product;
     }
 }

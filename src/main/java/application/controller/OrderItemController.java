@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/order-items")
+@RequestMapping("/api/orderItems")
 public class OrderItemController {
 
     private final IOrderItemService orderItemService;
@@ -20,11 +20,12 @@ public class OrderItemController {
         this.orderItemService = orderItemService;
     }
 
-    @PostMapping
+    @PostMapping("/add")
     public ResponseEntity<OrderItemDto> addOrderItem(@RequestBody OrderItemDto orderItemDto) {
         OrderItemDto createdOrderItem = orderItemService.add(orderItemDto);
         return new ResponseEntity<>(createdOrderItem, HttpStatus.CREATED);
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrderItem(@PathVariable("id") Long id) {

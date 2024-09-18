@@ -2,6 +2,7 @@ package application.Services.impl;
 import application.Dto.CartItemDto;
 import application.Dto.OrderDto;
 import application.Dto.OrderItemDto;
+import application.Dto.UserDto;
 import application.Repository.CartRepository;
 import application.Repository.OrderRepository;
 import application.Repository.ProductRepository;
@@ -35,6 +36,7 @@ public class OrderServiceImpl implements IOrderService {
     public OrderDto createOrder(OrderDto orderDto) {
         Cart cart = cartRepository.findById(orderDto.getUser().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Cart not found for user with id: " + orderDto.getUser().getId()));
+
         for (CartItemDto cartItemDto : orderDto.getCartItems()) {
             Product product = productRepository.findById(cartItemDto.getProduct().getId())
                     .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + cartItemDto.getProduct().getId()));
@@ -43,14 +45,17 @@ public class OrderServiceImpl implements IOrderService {
             if (newInventory < 0) {
                 throw new IllegalArgumentException("Insufficient inventory for product with id: " + cartItemDto.getProduct().getId());
             }
+
             product.setInventory(newInventory);
             productRepository.save(product);
         }
 
         Order order = convertToEntity(orderDto);
         Order savedOrder = orderRepository.save(order);
+
         return convertToDto(savedOrder);
     }
+
 
     @Transactional
     @Override
@@ -96,8 +101,15 @@ public class OrderServiceImpl implements IOrderService {
         orderDto.setTotalPrice(order.getTotalPrice());
         orderDto.setStatus(order.getStatus());
         orderDto.setDate(order.getDate());
+
+
+        if (order.getUser() != null) {
+            orderDto.setUser(new UserDto(order.getUser().getId()));
+        }
+
         return orderDto;
     }
+
 
     private Order convertToEntity(OrderDto orderDto) {
         if (orderDto == null) {

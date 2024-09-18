@@ -14,6 +14,9 @@ public class UserDto {
 
     }
 
+    public UserDto(Long id) {
+    }
+
     public Long getId() {
         return id;
     }

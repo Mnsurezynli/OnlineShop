@@ -45,7 +45,6 @@ public class OrderItemServiceImpl implements IOrderItemService {
         OrderItem savedOrderItem = orderItemRepository.save(orderItem);
         return convertToDto(savedOrderItem);
     }
-
     @Transactional
     @Override
     public void deleteById(Long orderItemId) {
@@ -53,7 +52,6 @@ public class OrderItemServiceImpl implements IOrderItemService {
             throw new ResourceNotFoundException("OrderItem with ID " + orderItemId + " not found.");
         }
         orderItemRepository.deleteById(orderItemId);
-        System.out.println("OrderItem deleted successfully");
     }
 
     @Override
@@ -92,6 +90,7 @@ public class OrderItemServiceImpl implements IOrderItemService {
         orderItemDto.setProductId(orderItem.getProduct().getId());
         return orderItemDto;
     }
+
 
     private OrderItem convertOrderItemDtoToEntity(OrderItemDto orderItemDto) {
         if (orderItemDto == null) {
