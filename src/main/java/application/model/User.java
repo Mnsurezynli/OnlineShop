@@ -25,8 +25,8 @@ public class User {
     @JoinColumn(name = "user_profile_id", referencedColumnName = "id")
     private UserProfile userProfile;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Cart> cart = new HashSet<>();
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Cart cart;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Order> orders;
@@ -84,11 +84,11 @@ public class User {
     }
 
 
-    public Set<Cart> getCart() {
+    public Cart getCart() {
         return cart;
     }
 
-    public void setCart(Set<Cart> cart) {
+    public void setCart(Cart cart) {
         this.cart = cart;
     }
 

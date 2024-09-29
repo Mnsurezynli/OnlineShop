@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Service
 public class UserProfileServiceImpl implements IUserProfileService {
 
-    private final UserProfileRepository userProfileRepository;
+    private  UserProfileRepository userProfileRepository;
 
     @Autowired
     public UserProfileServiceImpl(UserProfileRepository userProfileRepository) {

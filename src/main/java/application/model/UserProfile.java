@@ -22,7 +22,8 @@ public class UserProfile {
     private String address;
 
     @OneToOne(mappedBy = "userProfile")
-   private User user;
+    private User user;
+
     public Long getId() {
         return id;
     }
@@ -64,9 +65,10 @@ public class UserProfile {
     }
 
     public User getUser() {
-       return user;}
+        return user;
+    }
 
-   public void setUser(User user) {
-       this.user = user;
+    public void setUser(User user) {
+        this.user = user;
     }
 }

@@ -13,6 +13,7 @@ import application.model.UserProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
@@ -21,8 +22,8 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements IUserService {
 
-    private final UserRepository userRepository;
-    private final UserProfileRepository userProfileRepository;
+    private UserRepository userRepository;
+    private UserProfileRepository userProfileRepository;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, UserProfileRepository userProfileRepository) {

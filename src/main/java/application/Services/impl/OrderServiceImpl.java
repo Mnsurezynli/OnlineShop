@@ -20,9 +20,9 @@ import java.util.stream.Collectors;
 @Service
 public class OrderServiceImpl implements IOrderService {
 
-    private final OrderRepository orderRepository;
-    private final ProductRepository productRepository;
-    private final CartRepository cartRepository;
+    private  OrderRepository orderRepository;
+    private  ProductRepository productRepository;
+    private  CartRepository cartRepository;
 
     @Autowired
     public OrderServiceImpl(OrderRepository orderRepository, ProductRepository productRepository, CartRepository cartRepository) {
